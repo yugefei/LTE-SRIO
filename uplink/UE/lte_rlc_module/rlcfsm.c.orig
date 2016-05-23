@@ -1,0 +1,2132 @@
+#include <linux/if_ether.h>
+#include "../pkfmt.h"
+#include "rlcfsm.h"
+#include "Rlcprimitives.h"
+#include "../lte_system.h"
+#include "segment.h"
+/*
+#define 	ST_RECVU		4
+#define 	ST_RECVL		5
+#define 	ST_SENDL		6
+#define 	ST_SENDU		7
+#define 	ST_RETX			8
+*/
+static void rlc_init_enter(void);
+static void  rlc_close(void);
+static void rlc_interupt(void);
+static void rlc_pkt_receive_from_upper(void);
+static void rlc_pkt_receive_from_mac(void);
+static void rlc_AM_pkt_receive_from_mac(AM_Instance*amIns,FSM_PKT * pkt);
+static void rlc_UM_pkt_receive_from_mac(UM_RX_Instance *umRxIns,FSM_PKT * pkt);
+static void rlc_dispose(void);
+static void rlc_ioctrl_handler(void);
+
+void  findInsByRbid(u8 rbid,void **up, void **down , RlcMode *mode) ;  
+void  findInsBylcid(u8 lcid, void **up, void**down, RlcMode *mode);
+static void * findInsByCode(int code, RlcTimerType * timer);
+bool isInsideTranWin(struct AM_Instance *amIns, SequenceNumber SN);
+bool isInsideAmRecvWin(struct AM_Instance * amIns, SequenceNumber SN);
+bool isInsideUmRecvWin(struct UM_RX_Instance* umRxIns, SequenceNumber SN);
+bool isOrderedUm(struct UM_RX_Instance* umRxIns, SequenceNumber SN);
+u16 countSegInd(FSM_PKT *pkt);
+void assamble_segment(AmBuffer *ambuf, FSM_PKT *pkt);
+
+/***李旭龙: 分段，在分段和重组  ***/
+extern FSM_PKT * rlc_UM_segment(struct UM_TX_Instance *um_tx_ins,u32 size);
+extern FSM_PKT * rlc_AM_segment(struct AM_Instance *am_ins,u32 size);
+extern FSM_PKT* rlc_resegment(struct AmBuffer *tbuff, u32 sizeFromMac);
+extern void rlc_UM_reassemble_deliver(struct AM_Instance *amIns, struct pduLeft *pdu_left);
+extern void rlc_UM_reassemble_deliver(struct UM_RX_Instance *umIns, struct pduLeft *pdu_left);
+
+
+/***张义: 轮询，重传，发送状态报告 ***/
+void rlc_ctrl_pkt_trans(struct AM_Instance *amIns);
+static void rlc_poll_retx(struct AM_Instance *amIns);
+static void rlc_poll(struct AM_Instance *amIns, FSM_PKT * pkt);
+static void rlc_ctrl_pkt_recv(struct AM_Instance *amIns, FSM_PKT * pkt);
+void Assemble_Nack(struct Buffer *ctrlBf,unsigned short *ctrlHdr,unsigned short *ptr,unsigned short *nptr,unsigned int size,unsigned int *pduLen,unsigned short sn);
+void Assemble_Nack_Seg(struct Buffer *ctrlBf,unsigned short *ctrlHdr,
+                       unsigned short *ptr,unsigned short *nptr,unsigned int size,unsigned int *pduLen,
+                       unsigned short sn,unsigned short sostart,unsigned short soend);
+unsigned short getSO(unsigned short *ptr,unsigned short *amHdr,unsigned int *pduLen,FSM_PKT *pkt);
+void getNewData(unsigned short *ptr,unsigned int *pduLen,FSM_PKT * pkt,unsigned short *amHdr);
+unsigned short getNackSn(unsigned int * pduLen,unsigned short *amHdr,FSM_PKT * pkt,unsigned short * ptr);
+
+
+extern void Am_instance_add(void);
+extern void UM_instance_bulid(void);
+
+void rlc_main(void)
+{
+    FSM_ENTER(rlc_main);
+    FSM_BLOCK_SWITCH
+    {
+        FSM_STATE_UNFORCED(ST_INIT, "INIT",rlc_init_enter(), )
+        {
+            FSM_COND_TEST_IN("INIT")
+            FSM_TEST_COND(RLC_START_WORK)
+            FSM_COND_TEST_OUT("INIT")
+            FSM_TRANSIT_SWITCH
+            {
+                FSM_CASE_TRANSIT(0, ST_TRAN, , "INIT -> TRAN")
+                FSM_CASE_DEFAULT(ST_INIT, , "INIT->INIT")
+            }
+        }
+        FSM_STATE_UNFORCED(ST_TRAN, "TRAN",,rlc_interupt() )
+        {
+            FSM_COND_TEST_IN("TRAN")
+            FSM_TEST_COND(RLC_SUSPEND)
+            FSM_TEST_COND(RLC_DEACT)
+            FSM_TEST_COND(RLC_CLOSE)
+            FSM_COND_TEST_OUT("TRAN")
+            FSM_TRANSIT_SWITCH
+            {
+                FSM_CASE_TRANSIT(0,ST_SUSPEND,  ,"TRAN -> SUSPEND")
+                FSM_CASE_TRANSIT(1,ST_NULL,  , "TRAN -> NULL")
+                FSM_CASE_TRANSIT(2,ST_INIT,  , "TRAN -> INIT")
+                FSM_CASE_DEFAULT(ST_TRAN, , "TRAN->TRAN")	//transit to transimition state	by default.
+            }
+        }
+        FSM_STATE_FORCED(ST_SUSPEND, "SUSPEND", , )
+        {
+            FSM_TRANSIT_FORCE(ST_TRAN, , "default", "", "SUSPEND -> TRAN");
+        }
+        FSM_STATE_FORCED(ST_NULL, "NULL", , )
+        {
+            FSM_TRANSIT_FORCE(ST_TRAN, , "default", "", "NULL -> TRAN");
+        }
+    }
+    FSM_EXIT(0)
+}
+
+/***
+RLC 子层初始化，建立TM实体
+***/
+static void rlc_init_enter(void)
+{
+    TM_RX_Instance *tmRxIns;
+    TM_TX_Instance *tmTxIns;
+    int i;
+    FIN(rlc_init_enter());
+    SV_PTR_GET(rlc_sv);
+    if(RLC_OPEN)
+    {
+        // SV(ins_mode) = TM_MODE;
+        SV(isBufferReq) = 0;
+        SV(packetType) = -1;
+        INIT_LIST_HEAD(&SV(vAm_ins).amList);
+        INIT_LIST_HEAD(&SV(vUm_rx_ins).umRxList);
+        INIT_LIST_HEAD(&SV(vUm_tx_ins).umTxList);
+        INIT_LIST_HEAD(&SV(vTm_rx_ins).tmRxList);
+        INIT_LIST_HEAD(&SV(vTm_tx_ins).tmTxList);
+//定时器管理数组初始化
+        for(i = 0; i<MAX_CODE; ++i) SV(allocCode[i]) = i;
+        SV(allocCode[0]) =  SV(allocCode[0x0B]) =  SV(allocCode[0x21])  = SV(allocCode[0x22]) = SV(allocCode[0x23]) =\
+                            SV(allocCode[0x24]) = SV(allocCode[0x25]) = SV(allocCode[0x26]) = SV(allocCode[0x27]) = SV(allocCode[0x28]) = \
+                                    SV(allocCode[0x29])  = -1;
+        //fsm_printf("rlc init is called");
+        /* TM receiving instance estabilshment corresponding to PCCH  */
+        tmRxIns = instance_create(TM_RX_Instance) ;
+        tmRxIns->pbCh = 1;            //PCCH
+        tmRxIns->rnti = 0;
+        tmRxIns->rbId = 0;
+        tmRxIns->lcId = 0;
+        tmRxIns->currentStatVar = ST_TRAN;
+        list_add_tail(&tmRxIns->tmRxList, &SV(vTm_rx_ins).tmRxList);
+        fsm_printf(" PCCH instance has bulided\n");
+
+        /* TM receiving instance estabilshment corresponding to BCCH  */
+        tmRxIns = instance_create(TM_RX_Instance) ;
+        tmRxIns->pbCh = 2;            //BCCH
+        tmRxIns->rnti = 0;
+        tmRxIns->rbId = 0;
+        tmRxIns->lcId = 0;       //BCCH
+        tmRxIns->currentStatVar = ST_TRAN;
+        list_add_tail(&tmRxIns->tmRxList, &SV(vTm_rx_ins).tmRxList);
+        fsm_printf(" BCCH instance has bulided\n");
+
+        /* TM receiving instance estabilshment corresponding to CCCH  */
+        tmRxIns = instance_create(TM_RX_Instance) ;
+        tmRxIns->pbCh = 0;            //CCCH
+        tmRxIns->rnti = 0;
+        tmRxIns->rbId = 0;
+        tmRxIns->lcId = 0;       //CCCH
+        tmRxIns->currentStatVar = ST_TRAN;
+        list_add_tail(&tmRxIns->tmRxList, &SV(vTm_rx_ins).tmRxList);
+        fsm_printf(" CCCH recv instance has bulided\n");
+
+        /* TM transimitting instance estabilshment corresponding to CCCH  */
+        tmTxIns = instance_create(TM_TX_Instance) ;
+        tmTxIns->pbCh = 0;            //CCCH
+        tmTxIns->rnti = 0;
+        tmTxIns->rbId = 0;
+        tmTxIns->lcId = 0;       //CCCH
+        INIT_LIST_HEAD(&tmTxIns->tmSduBuffer.list);
+        tmTxIns->tmSduBufferNum = 0;
+        tmTxIns->tmSduBufferSize = 0;
+        tmTxIns->currentStatVar = ST_TRAN;
+        list_add_tail(&tmTxIns->tmTxList, &SV(vTm_tx_ins).tmTxList);
+        fsm_printf(" CCCH tran instance has bulided\n");
+
+        //为测试建立一个AM实体
+        Am_instance_add();
+        //UM_instance_bulid();
+        fsm_schedule_self(0, _START_WORK);
+
+    }
+
+    FOUT;
+}
+/****
+Process the interuption of the FSM, including packet and ioctl arrival,and timeout of timer
+***/
+static void rlc_interupt()
+{
+    //  struct list_head* pos;
+    struct  AM_Instance * amIns;
+    struct  UM_RX_Instance *umRxIns;
+    void *insPtr;
+    FIN(rlc_interupt());
+    SV_PTR_GET(rlc_sv);
+    if(RLC_CLOSE)                              //模块关闭
+        rlc_close();
+//测试
+//    else if(RLC_SEGMENT);//分段测试函数
+//    else if(RLC_RESEGMENT);
+//    else if(RLC_REASSAMBLE);
+//    else if(RLC_POLL);
+//    else if(RLC_CTRL_PKT_TRAN);
+//    else if(RLC_CTRL_PKT_RECV);
+
+    else if(RLC_IOCTL_ARRIVAL)         	//ioctrl
+        rlc_ioctrl_handler();
+    else if(RLC_PKT_FROM_LOWER)       //接收来自下层的包
+        rlc_pkt_receive_from_mac();
+    else if(RLC_PKT_FROM_UPPER)		//接收来自上层的包
+        rlc_pkt_receive_from_upper();
+    else if(RLC_EV_SELF)				// 定时器超时，定位实体/
+    {
+        if(!(insPtr = findInsByCode(fsm_ev_code(), &SV(timerType))))
+        {
+            fsm_printf("cannot find the instance of this code \n ");
+            FOUT;
+        }
+        switch(SV(timerType))
+        {
+        case POLL_RETX:
+            amIns = (AM_Instance *)insPtr;
+            amIns->pollRetxTimer = 0;
+            rlc_poll_retx( amIns);
+            fsm_printf("poll timeout\n");
+            FOUT;
+
+        case STAT_PRO:
+            amIns = (AM_Instance *)insPtr;
+            amIns->statProhTimer = 0;
+            rlc_ctrl_pkt_trans(amIns);
+            FOUT;
+
+        case UM_REORDER:
+            umRxIns = (UM_RX_Instance *) insPtr;
+            umRxIns->reorderTimer = 0;
+            fsm_printf("UM_REORDER timeout (rbid is %d)\n", umRxIns->rbId);
+            if(umRxIns->snFiledLength == 5)
+                while((umRxIns->umRecvWindow5[++umRxIns->vr_ur] != NULL) && (umRxIns->vr_ur <= umRxIns->vr_ux));
+            if(umRxIns->snFiledLength == 10)
+            {
+                umRxIns->vr_ur = umRxIns->vr_ux - 1;
+                while((umRxIns->umRecvWindow10[++umRxIns->vr_ur] != NULL) && (umRxIns->vr_ur >= umRxIns->vr_ux));
+            }
+	    // fsm_pkt_send(rlc_UM_reassemble_deliver(umRxIns), STRM_TO_PDCP);
+            fsm_printf("umRxIns->vr_ur is %d, umRxIns->vr_ux is %d\n\n",umRxIns->vr_ur, umRxIns->vr_ux);
+            FOUT;
+
+        case AM_REORDER:
+            amIns = (AM_Instance *)insPtr;
+            amIns->reorderTimer = 0;
+            fsm_printf("\nam reorder timeout\n");
+            //更新vr_ms为第一个序列号不小于vr_x，并且还没有对其所有字节分段接收完全的AMD PDU
+            amIns->vr_ms = amIns->vr_x - 1;
+            while((++amIns->vr_ms >= amIns->vr_x)&&\
+                    ((amIns->amRecvWindow[amIns->vr_ms] != NULL)&&(amIns->amRecvWindow[amIns->vr_ms] == FULL_SDU)));
+            fsm_printf("amIns->vr_ms is updated to %d\n",amIns->vr_ms);
+            if(amIns->vr_h > amIns->vr_ms)
+            {
+                amIns->reorderTimer = fsm_schedule_self(amIns->reorderTimerValue, amIns->reorderTimerCode);
+                amIns->vr_x = amIns->vr_h;
+                fsm_printf("amIns->vr_x is updated to %d, timer is sheduling again\n", amIns->vr_x );
+            }
+            FOUT;
+        default:
+            fsm_printf(" cannot distinfuish this code \n");
+        }
+    }
+    else  fsm_printf(" cannot distinfuish the interrpt\n");
+    FOUT;
+}
+/****
+Receive packets from RRC or PDCP layer,add it into sdu buffer
+*****/
+static void rlc_pkt_receive_from_upper(void)
+{
+    FSM_PKT * skb;
+//    struct list_head* pos;
+    TmBuffer *tmElm;
+    struct UmBuffer *umElm;
+    struct AmSduBuffer *amElm;
+    URLC_IciMsg * iciMsg;
+    struct  AM_Instance * amIns;
+    struct  UM_TX_Instance *umTxIns;
+    struct  TM_TX_Instance *tmTxIns;
+    void *insptru, *insptrd;
+    FIN(rlc_pkt_receive_from_upper());
+    SV_PTR_GET(rlc_sv);
+
+    skb = (FSM_PKT *)fsm_pkt_get();
+//  fsm_printf("the icimsg are %d, %d, %d\n",iciMsg->pbCh, iciMsg->rbId,iciMsg->rnti);
+    fsm_printf("entering rlc_pkt_receive_from_upper()\n");
+
+    iciMsg = (URLC_IciMsg*)skb->head;
+    if(iciMsg->pbCh == 0)
+    {
+        findInsByRbid(iciMsg->rbId, &insptru, &insptrd ,&SV(ins_mode));
+        switch(SV(ins_mode))
+        {
+        case AM_MODE:
+            if(insptru == NULL)
+            {
+                fsm_printf("rbid(%d) has no am instance \n",iciMsg->rbId);
+                break;
+            }
+            amIns = (AM_Instance *)insptru;
+            if(amIns->currentStatVar == ST_SUSPEND)
+            {
+                fsm_printf("am instance is suspended(rbid is %d)\n",amIns->rbId);
+                break;
+            }
+            fsm_printf("the size in am instance is %d\n", amIns->amSduBufferSize += skb->len);
+            fsm_printf("the number in am instance is %d\n",  ++amIns->amSduBufferNum);
+            fsm_printf("the context  of the data is %s\n",  (char*)skb->data);
+            amElm = (AmSduBuffer *)fsm_mem_alloc(sizeof(AmSduBuffer));
+            amElm->pkt = skb;
+            amElm->pktstatus = FULL_SDU;
+            amElm->pos = 0;
+            list_add_tail(&amElm->list, &amIns->amSduBuffer.list);
+
+            if(SV(isBufferReq) == 0)
+                PMRLC_BUFFERREP_REQ();
+            FOUT;
+
+        case UM_MODE:
+            if(insptru == NULL)
+            {
+                fsm_printf("rbid (%d )has no um tran instance \n",iciMsg->rbId);
+                break;
+            }
+            umTxIns = (UM_TX_Instance *)insptru;
+            if(umTxIns->CurrentStatVar == ST_SUSPEND)
+            {
+                fsm_printf("um instance is suspended(rbid is %d)\n",umTxIns->rbid);
+                break;
+            }
+            fsm_printf("the number in um tran instance is %d\n", ++umTxIns->umSduBufferNum);
+            fsm_printf("the size in un tran instance is %d\n", umTxIns->umSduBufferSize += skb->len);
+            fsm_printf("the context  of the data is %s\n",  (char*)skb->data);
+            umElm = (UmBuffer *)fsm_mem_alloc(sizeof(UmBuffer));
+            umElm->pkt = skb;
+            umElm->pktstatus = FULL_SDU;
+            umElm->pos = 0;
+            list_add_tail(&umElm->list, &umTxIns->umSduBuffer.list);
+            //  if(SV(isBufferReq) == 0)
+            //      PMRLC_BUFFERREP_REQ();
+            FOUT;
+
+        case TM_MODE:
+            if(insptru == NULL)
+                break;
+            tmTxIns = (TM_TX_Instance *)insptru;
+
+            fsm_printf("the number in tm tran instance is %d\n", ++tmTxIns->tmSduBufferNum);
+            fsm_printf("the size in tm tran instance is %d\n",  tmTxIns->tmSduBufferSize += skb->len);
+            fsm_printf("the context  of the data is %s\n",  (char*)skb->data);
+            tmElm = (TmBuffer *) fsm_mem_alloc(sizeof(TmBuffer));
+            tmElm->pkt = skb;
+            list_add_tail(&tmElm->list, &tmTxIns->tmSduBuffer.list);
+            if(SV(isBufferReq) == 0)
+                PMRLC_BUFFERREP_REQ();
+            FOUT;
+        default:
+            fsm_printf(" cannot distinfuish this  %d", SV(ins_mode));
+        }
+        fsm_printf("cannot find the instance or the instance is suspended\n");
+        if(skb)fsm_pkt_destroy(skb);
+    }
+    else
+    {
+        fsm_printf("no logic channel to transimmit this message\n");
+        fsm_pkt_destroy(skb);
+    }
+    FOUT;
+}
+/****
+Receive packets from MAC layer, and put it in AM or UM instances receive buffer
+****/
+static void rlc_pkt_receive_from_mac(void)
+{
+    FSM_PKT * skb;
+    //  struct list_head* pos;
+    MRLC_fromMac_IciMsg* micimsg;
+    URLC_IciMsg icimsg;
+    struct  AM_Instance * amIns;
+    struct  UM_RX_Instance *umRxIns;
+//    struct  TM_RX_Instance *tmRxIns;
+    void *insptru, *insptrd;
+    FIN(rlc_pkt_receive_from_mac());
+    SV_PTR_GET(rlc_sv);
+
+    skb = fsm_pkt_get();
+    micimsg = (MRLC_fromMac_IciMsg*)skb->head;
+    fsm_printf("entering rlc_pkt_receive_from_mac(lcid is %d,pbch is %d)\n",micimsg->lcid,micimsg->pbCh);
+    if(micimsg->pbCh ==0 && micimsg->lcid != 0 )
+    {
+        findInsBylcid(micimsg->lcid, &insptru, &insptrd,&SV(ins_mode));
+        switch(SV(ins_mode))
+        {
+        case AM_MODE:
+            if(insptru == NULL)
+                break;
+            amIns = ( AM_Instance *)insptru;
+            if(amIns->currentStatVar == ST_SUSPEND)
+                break;
+            rlc_AM_pkt_receive_from_mac(amIns,skb);
+            //    fsm_printf("time for rlc_AM_pkt_receive_from_mac(amIns,skb)\n");
+            FOUT;
+
+        case UM_MODE:
+            if(insptrd == NULL)
+                break;
+            umRxIns = (UM_RX_Instance *)insptrd;
+            if(umRxIns->currentStatVar == ST_SUSPEND)
+                break;
+            rlc_UM_pkt_receive_from_mac(umRxIns ,skb);
+            FOUT;
+
+        default:
+            fsm_printf(" cannot distinfuish this  %d", SV(ins_mode));
+        }
+        fsm_printf("cannot find the instance or the instance is suspended(rbid is %d)\n", micimsg->lcid);
+        fsm_pkt_destroy(skb);
+    }
+    else
+    {
+        icimsg.pbCh = micimsg->pbCh;
+        icimsg.rbId = 0;
+        icimsg.rnti = icimsg.psn = 0;
+        fsm_mem_cpy(skb->head, &icimsg , sizeof(URLC_IciMsg));
+        fsm_pkt_send(skb, STRM_TO_RRC);
+    }
+    FOUT;
+}
+
+/****
+Receive packets from MAC layer, and put it in AM instances receive buffer
+****/
+static void rlc_AM_pkt_receive_from_mac(AM_Instance * amIns, FSM_PKT * pkt)
+{
+    RLC_AMPDU_head* head;
+    RLC_AMPDU_seg_head *seghead;
+    RLC_AMPDU_fixhead *fixhead;
+    RLC_AMPDU_seg_exthead* extseghead;
+    AmBuffer *ambuf;
+    FSM_PKT *pkptr;
+    char *bufptr;
+    int datalen;
+    SequenceNumber SN;
+    struct list_head *pos;
+    int i;
+    FIN(rlc_AM_pkt_receive_from_mac());
+    SV_PTR_GET(rlc_sv);
+    fixhead = ( RLC_AMPDU_fixhead *)pkt->data;
+    fsm_printf("\nentering rlc_AM_pkt_receive_from_mac\n");
+
+//如果是控制PDU
+    if(fixhead->DorC == 0)       //cntrol pdu
+    {
+        fsm_printf("this is a ctrl PDU\n");
+        //  rlc_ctrl_pkt_recv(amIns, pkt);
+        FOUT;
+    }
+
+//如果是AMD PDU
+    if(fixhead->RF == 0)   //AMD PDU
+    {
+        fsm_printf("this is an AMD PDU (SN is %d)\n", fixhead->SN);
+        head = (RLC_AMPDU_head*) fixhead;
+        //head->head = head->head;
+        SN = fixhead->SN;
+        SN %= 1024;
+        fsm_printf("the context is %s\n",(char*)(fixhead + 1));
+//在接收窗口外
+        if(!isInsideAmRecvWin(amIns, SN))
+        {
+            fsm_printf("PDU is outside the receiving window\n");
+            fsm_pkt_destroy(pkt);
+            FOUT;
+        }
+//在接收窗口内，但是未接收完全,或完全接收
+        if(amIns->amRecvWindow[SN] != NULL)
+        {
+            if(amIns->amRecvWindow[SN]->pktstatus == FULL_SDU)
+            {
+                fsm_pkt_destroy(pkt);
+                fsm_printf("the packet has been received completly\n");
+                FOUT;
+            }
+            else
+            {
+                fsm_pkt_destroy(amIns->amRecvWindow[SN]->pkt);
+                fsm_mem_free(amIns->amRecvWindow[SN]);
+                fsm_printf("the packet has been received but not completly\n");
+            }
+        }
+        ambuf = (AmBuffer *)fsm_mem_alloc(sizeof(AmBuffer ));
+        ambuf->pkt = pkt;
+        ambuf->pktstatus = FULL_SDU;
+        ambuf->pos = 0;
+        ambuf->segnum = 0;
+        ambuf->SN = SN;
+        list_add_tail(&ambuf->list, &amIns->amRecvBuffer.list);
+        amIns->amRecvWindow[SN] = ambuf;
+        fsm_printf("pkt has been put into buffer(SN is %d)\n", SN);
+    }
+
+//如果是AMD PDU 分段
+    else
+    {
+        fsm_printf("this is an AMD PDU segment (SN is %d)\n", fixhead->SN);
+        extseghead = (RLC_AMPDU_seg_exthead*)fixhead;
+        seghead = (RLC_AMPDU_seg_head *)fixhead;
+        //    seghead->head = seghead->head;
+        SN = fixhead->SN;
+        SN %= 1024;
+
+        //是否在接收窗口外,并且已收到过其包含的字节分段
+        if((!isInsideAmRecvWin(amIns, SN) )||((amIns->amRecvWindow[SN] != NULL)&&(amIns->amRecvWindow[SN]->pktstatus == FULL_SDU)))
+        {
+            fsm_printf("PDU segment is outside the receiving window or the segment has been received\n");
+            fsm_pkt_destroy(pkt);
+            FOUT;
+        }
+        /*      i = 0;
+             while(amIns->amRecvWindow[SN]->segStart[i] != -1)
+              {
+                  if((amIns->amRecvWindow[SN]->segStart[i] < extseghead->SO)\
+                          &&(amIns->amRecvWindow[SN]->segEnd[i] > extseghead->SO))
+                  {
+                      fsm_printf("PDU segment has been received\n");
+                      fsm_pkt_destroy(pkt);
+                      FOUT;
+                  }
+                  else ++i;
+              }*/
+        //如果原来没有接收到过该PDU的分段
+        if(amIns->amRecvWindow[SN] == NULL)
+        {
+            fsm_printf("instance has not receive this PDU segment before(pos is %d)\n", extseghead->SO);
+            ambuf = (AmBuffer *)fsm_mem_alloc(sizeof(AmBuffer ));
+         //   ambuf->pkt = pkt;
+            ambuf->pos = extseghead->SO;
+		 if(0 == ambuf->pos)
+		 	ambuf->pkt = pkt;
+		 else
+		 {
+			//将原pdu分段转移到更大的分段中
+			datalen = pkt->len + extseghead->SO;			
+			pkptr = fsm_pkt_create(datalen + fsm_skb_headroom(pkt));
+			bufptr =  pkptr->data + 4 + 2*countSegInd(pkt) + ambuf->pos;
+			fsm_mem_cpy(bufptr, pkt->data, pkt->len);
+			fsm_skb_put(pkptr, datalen);
+			fsm_pkt_destroy(pkt);
+			ambuf->pkt = pkptr;			
+		 }
+            ambuf->SN = SN;
+            ambuf->segnum = 1;
+            ambuf->datalen = 0;
+            if(extseghead->LSF == 1)
+            {
+                ambuf->pktstatus = LAST_SEGMENT;
+                ambuf->datalen = ambuf->pos + pkt->len;
+                fsm_printf("this is the last segment, and the total len of original PDU is %d\n", ambuf->datalen );
+            }
+            else
+                ambuf->pktstatus = ANY_SEGMENT;
+            ambuf->segStart[0] = ambuf->pos;
+            ambuf->segEnd[0] =ambuf->pos + pkt->len -4 -2*countSegInd(pkt);
+            list_add_tail(&ambuf->list, &amIns->amRecvBuffer.list);
+            fsm_printf("pkt segment has been put into buffer(SN is %d)\n", SN);
+            amIns->amRecvWindow[SN] = ambuf;
+        }
+        //如果原来接收到过该PDU的分段
+        else
+        {
+            //丢弃重复分段
+            if(extseghead->LSF == 1)
+                amIns->amRecvWindow[SN]->datalen = ambuf->pos + pkt->len;
+            assamble_segment(amIns->amRecvWindow[SN], pkt);
+            fsm_printf("pkt segment has been assambled into buffer(SN is %d)\n", SN);
+            if(amIns->amRecvWindow[SN]->datalen == amIns->amRecvWindow[SN]->pkt->len)
+                amIns->amRecvWindow[SN]->pktstatus == FULL_SDU;
+        }
+    }
+
+//PDU放入缓存后，判断SN的值
+
+//大于vr_h
+    if(SN >= amIns->vr_h)
+    {
+        fsm_printf("SN > amIns->vr_h\n");
+        amIns->vr_h = SN + 1;
+        fsm_printf("amIns->vr_h is updated to %d\n",amIns->vr_h);
+    }
+//如果vr_ms的所有分段都已经接收完全
+    if((amIns->amRecvWindow[amIns->vr_ms] != NULL)&&(amIns->amRecvWindow[amIns->vr_ms]->pktstatus == FULL_SDU))
+    {
+        while((amIns->amRecvWindow[++amIns->vr_ms] != NULL)&&(amIns->amRecvWindow[amIns->vr_ms]->pktstatus == FULL_SDU));
+        fsm_printf("amIns->vr_ms has received completly and updated to %d\n",amIns->vr_ms);
+    }
+//为vr_r
+    if((amIns->amRecvWindow[amIns->vr_r] != NULL)&&(amIns->amRecvWindow[amIns->vr_r]->pktstatus == FULL_SDU))
+    {
+        fsm_printf("SN == amIns->vr_r\n");
+        while((amIns->amRecvWindow[++amIns->vr_r] != NULL)&&(amIns->amRecvWindow[amIns->vr_r]->pktstatus == FULL_SDU));
+        amIns->vr_mr = (amIns->vr_r + AM_WINDOW_SIZE) % 1024;
+        fsm_printf("amIns->vr_r is updated to %d, amIns->vr_mr is updated to %d\n",amIns->vr_r, amIns->vr_mr);
+        // fsm_pkt_send(rlc_AM_reassemble_deliver(amIns),STRM_TO_PDCP);
+    }
+
+//如果定时器正在计时，且x>r,或者x在窗口外并且不等于mr
+    if(amIns->reorderTimer &&((amIns->vr_x == amIns->vr_r)||(!isInsideAmRecvWin(amIns, SN)&&(amIns->vr_x != amIns->vr_mr))))
+    {
+        fsm_printf("timer is canceling\n");
+        fsm_schedule_cancel(amIns->reorderTimer);
+        amIns->reorderTimer = 0;
+    }
+    if(!amIns->reorderTimer &&(amIns->vr_h > amIns->vr_r))
+    {
+        fsm_printf("timer is scheduling\n");
+        amIns->reorderTimer = fsm_schedule_self(amIns->reorderTimerValue ,amIns->reorderTimerCode);
+        amIns->vr_x = amIns->vr_h;
+        fsm_printf("amIns->vr_x is updated to %d\n",amIns->vr_x);
+    }
+//请求轮询
+    if(fixhead->P == 1)
+    {
+        if(!amIns->statProhTimer)
+            //fsm_printf("poll is called\n\n");
+            rlc_ctrl_pkt_trans(amIns);
+    }
+
+    fsm_printf("amIns->vr_h is %d, amIns->vr_mr is %d, amIns->vr_ms is %d, amIns->vr_r is %d, amIns->vr_x is %d\n",amIns->vr_h, amIns->vr_mr, amIns->vr_ms, amIns->vr_r, amIns->vr_x);
+    for(i = amIns->vr_r; i < amIns->vr_ms; ++i)
+    {
+        if(amIns->amRecvWindow[i] == NULL)
+            fsm_printf("%d is not received \n", i);
+        else
+            fsm_printf("%d is reveived and the status is %d\n", i, amIns->amRecvWindow[i]->pktstatus);
+    }
+    FOUT;
+}
+
+
+/****
+Receive packets from MAC layer, and put it in UM instances receive buffer
+*****/
+static void rlc_UM_pkt_receive_from_mac(UM_RX_Instance *umRxIns, FSM_PKT * pkt)
+{
+    RLC_UM_size5_head *head_size5;
+    RLC_UM_size10_head *head_size10;
+    RLC_UM_size10_subhead *head_subhead;
+    UmBuffer *umbuf;
+    SequenceNumber SN;
+    short  base,temp;
+    u16 windows;
+    FIN(rlc_UM_pkt_receive_from_mac());
+    SV_PTR_GET(rlc_sv);
+    fsm_printf("\nentering rlc_UM_pkt_receive_from_mac\n");
+    fsm_printf("um instance's snFiledLength is %d\n",umRxIns->snFiledLength);
+    switch(umRxIns->snFiledLength)
+    {
+    case 5:
+        head_size5 = (RLC_UM_size5_head *)pkt->data;
+        SN = head_size5->SN;
+        SN %= 36;
+        base = umRxIns->vr_uh - UM_WINDOW_SIZE5 ;
+        windows = UM_WINDOW_SIZE5 *2;
+        fsm_printf("the context is %s\n", (char*)(head_size5 + 1));
+        break;
+    case 10:
+        head_size10 = (RLC_UM_size10_head*)pkt->data;
+        head_subhead = (RLC_UM_size10_subhead *)pkt->data;
+        // head_size10->head = fsm_ntohs(head_size10->head);
+        SN = head_subhead->SN;
+        SN %= 1024;
+        base = umRxIns->vr_uh - UM_WINDOW_SIZE10 ;
+        windows = UM_WINDOW_SIZE10 *2;
+        fsm_printf("the context is %s\n", (char*)(head_size10 + 1));
+        break;
+    default:
+        fsm_printf("cannot distinguish the %d",umRxIns->snFiledLength);
+    }
+    //已被接收或已被重排序
+    if((umRxIns->umRecvWindow5[SN] != NULL ) || isOrderedUm(umRxIns,SN))
+    {
+        fsm_printf("has been received or reordered(SN is %d)\n", SN);
+        fsm_pkt_destroy(pkt);
+        FOUT;
+    }
+    umbuf = (UmBuffer*)fsm_mem_alloc(sizeof(UmBuffer));
+    umbuf->pkt = pkt;
+    umbuf->SN = SN;
+    list_add_tail(&umbuf->list, &umRxIns->umRecvBuffer.list);
+    fsm_printf("pkt has been put into buffer(SN is %d)\n", SN);
+    umRxIns->umRecvWindow5[SN] = umbuf;
+    //重排序窗口外
+    if(SN  >=  umRxIns->vr_uh)
+    {
+        //  fsm_printf("umbuf->SN  >=  umRxIns->vr_uh is %d\n",umRxIns->vr_uh);
+        umRxIns->vr_uh = SN + 1;
+        fsm_printf("outside the windows: umRxIns->vr_uh is updated to %d\n", umRxIns->vr_uh);
+        temp = umRxIns->vr_ur;
+        if(temp < base )
+        {
+            temp = base % windows;
+            if(temp < 0)
+                temp += windows;
+            umRxIns->vr_ur =  temp;
+            fsm_printf("umRxIns->vr_ur is updated to %d\n", umRxIns->vr_ur);
+        }
+        //  fsm_printf("umRxIns->vr_ur is %d\n",umRxIns->vr_ur);
+        //     fsm_pkt_send(rlc_UM_reassemble_deliver( umRxIns),STRM_TO_PDCP);
+    }
+    //接收缓存中存在vr_ur
+    if(umRxIns->snFiledLength == 5)
+    {
+        fsm_printf("entering 5\n");
+        if(umRxIns->umRecvWindow5[umRxIns->vr_ur] != NULL)
+        {
+            //fsm_printf("umbuf->SN  ==  umRxIns->vr_ur is %d\n", umRxIns->vr_ur);
+            while((umRxIns->umRecvWindow5[++umRxIns->vr_ur] != NULL)&&(umRxIns->vr_ur <= umRxIns->vr_uh ));
+            fsm_printf("umRxIns->vr_ur is updated to %d\n", umRxIns->vr_ur);
+            //    fsm_pkt_send(rlc_UM_reassemble_deliver( umRxIns),STRM_TO_PDCP);
+        }
+    }
+
+    else if(umRxIns->snFiledLength == 10)
+    {
+        fsm_printf("entering 10\n");
+        if(umRxIns->umRecvWindow10[umRxIns->vr_ur] != NULL)
+        {
+            //fsm_printf("umbuf->SN  ==  umRxIns->vr_ur is %d\n", umRxIns->vr_ur);
+            while((umRxIns->umRecvWindow10[++umRxIns->vr_ur] != NULL)&&(umRxIns->vr_ur <= umRxIns->vr_uh ));
+            fsm_printf("umRxIns->vr_ur is updated to %d\n", umRxIns->vr_ur);
+            //    fsm_pkt_send(rlc_UM_reassemble_deliver( umRxIns),STRM_TO_PDCP);
+        }
+    }
+    //如果定时器正计时，vr_x<vr_ur,或vr-x在重排序窗口外。并且x != h
+    if(umRxIns->reorderTimer &&((umRxIns->vr_ux <= umRxIns->vr_ur)|| \
+                                ((!isInsideUmRecvWin(umRxIns,umRxIns->vr_ux ))&&(umRxIns->vr_ux != umRxIns->vr_uh))))
+    {
+        fsm_printf("timer is canceling\n\n");
+        fsm_schedule_cancel(umRxIns->reorderTimer);
+        umRxIns->reorderTimer = 0;
+    }
+    //如果定时器停止，并且满足h>r(暂时改成!=)
+    if((!umRxIns->reorderTimer )&&(umRxIns->vr_uh != umRxIns->vr_ur))//??
+    {
+        fsm_printf("timer is scheduling\n");
+        umRxIns->reorderTimer = fsm_schedule_self(umRxIns->reorderTimerValue, umRxIns->reorderTimerCode);
+        umRxIns->vr_ux = umRxIns->vr_uh;
+        fsm_printf("umRxIns->vr_ux is updated to %d\n\n", umRxIns->vr_ux);
+    }
+    FOUT;
+}
+
+/****
+Realase the packets in all instances' buffers, and realase the insances, and close the
+module
+*****/
+static void rlc_close()
+{
+    struct  AM_Instance *amIns, *tempAmIns;
+    struct  UM_RX_Instance *umRxIns,*tempUrIns;
+    struct  UM_TX_Instance *umTxIns, *tempUtIns;
+    struct TM_RX_Instance* tmRxIns, *tempTrIns;
+    struct TM_TX_Instance *tmTxIns, *tempTtIns;
+    struct AmSduBuffer*amsBuffer, *tempAmsBuffer;
+    struct AmBuffer *amBuffer, *tempAmBuffer;
+    struct Buffer *buffer, *tempBuffer;
+    struct UmBuffer *umBuffer, *tempUmBuffer;
+    FIN(rlc_close());
+    SV_PTR_GET(rlc_sv);
+//释放AM实体
+    if(!list_empty(&SV(vAm_ins).amList))
+    {
+        list_for_each_entry_safe(amIns,tempAmIns, &SV(vAm_ins).amList,amList)
+        {
+            list_del(&amIns->amList);
+            if(!list_empty(&amIns->amRetxBuffer.list))
+            {
+                list_for_each_entry_safe(amBuffer,tempAmBuffer, &amIns->amRetxBuffer.list,list)
+                {
+                    list_del(&amBuffer->list);
+                    fsm_pkt_destroy(amBuffer->pkt);
+                    fsm_mem_free(amBuffer);
+                    fsm_printf("am:retx buffer is realeasing\n");
+                    if(list_empty(&amIns->amRetxBuffer.list))
+                        break;
+                }
+            }
+            if(!list_empty(&amIns->amTransmittedBuffer.list))
+            {
+                list_for_each_entry_safe(amBuffer,tempAmBuffer, &amIns->amTransmittedBuffer.list,list)
+                {
+                    list_del(&amBuffer->list);
+                    fsm_pkt_destroy(amBuffer->pkt);
+                    fsm_mem_free(amBuffer);
+                    fsm_printf("am:transmited buffer is realeasing\n");
+                    if(list_empty(&amIns->amTransmittedBuffer.list))
+                        break;
+                }
+            }
+            if(!list_empty(&amIns->amSduBuffer.list))
+            {
+                list_for_each_entry_safe(amsBuffer,tempAmsBuffer, &amIns->amSduBuffer.list,list)
+                {
+                    list_del(&amsBuffer->list);
+                    fsm_pkt_destroy(amsBuffer->pkt);
+                    fsm_mem_free(amsBuffer);
+                    fsm_printf("am:sdu buffer is realeasing\n");
+                    if(list_empty(&amIns->amSduBuffer.list))
+                        break;
+                }
+            }
+            if(!list_empty(&amIns->ctrlPduBuffer.list))
+            {
+                list_for_each_entry_safe(buffer,tempBuffer, &amIns->ctrlPduBuffer.list,list)
+                {
+                    list_del(&buffer->list);
+                    fsm_pkt_destroy(buffer->pkt);
+                    fsm_mem_free(buffer);
+                    fsm_printf("am:ctrl buffer is realeasing\n");
+                    if(list_empty(&amIns->ctrlPduBuffer.list))
+                        break;
+                }
+            }
+            if(!list_empty(&amIns->amRecvBuffer.list))
+            {
+                list_for_each_entry_safe(amBuffer,tempAmBuffer, &amIns->amRecvBuffer.list,list)
+                {
+                    list_del(&amBuffer->list);
+                    fsm_pkt_destroy(amBuffer->pkt);
+                    fsm_mem_free(amBuffer);
+                    fsm_printf("am:recv buffer is realeasing\n");
+                    if(list_empty(&amIns->amRecvBuffer.list))
+                        break;
+                }
+            }
+            fsm_printf("am instance  has released(rbid is%d)\n", amIns->rbId);
+            fsm_mem_free(amIns);
+            if(list_empty(&SV(vAm_ins).amList))
+                break;
+        }
+    }
+    //释放UM接收实体
+    if(!list_empty(&SV(vUm_rx_ins).umRxList))
+    {
+        list_for_each_entry_safe(umRxIns,tempUrIns, &SV(vUm_rx_ins).umRxList,umRxList)
+        {
+            list_del(&umRxIns->umRxList);
+            if(!list_empty(&umRxIns->umRecvBuffer.list))
+            {
+                list_for_each_entry_safe(umBuffer,tempUmBuffer, &umRxIns->umRecvBuffer.list,list)
+                {
+                    list_del(&umBuffer->list);
+                    fsm_pkt_destroy(umBuffer->pkt);
+                    fsm_mem_free(umBuffer);
+                    fsm_printf("um recv:recv buffer is realeasing\n");
+                    if(list_empty(&umRxIns->umRecvBuffer.list))
+                        break;
+                }
+            }
+            fsm_printf("um instance  has released(rbid is %d)\n",umRxIns->rbId);
+            fsm_mem_free(umRxIns);
+            if(list_empty(&SV(vUm_rx_ins).umRxList))
+                break;
+        }
+    }
+//释放UM发送实体
+    if(!list_empty(&SV(vUm_tx_ins).umTxList))
+    {
+        list_for_each_entry_safe(umTxIns,tempUtIns, &SV(vUm_tx_ins).umTxList,umTxList)
+        {
+            list_del(&umTxIns->umTxList);
+            if(!list_empty(&umTxIns->umSduBuffer.list))
+            {
+                list_for_each_entry_safe(umBuffer,tempUmBuffer, &umTxIns->umSduBuffer.list,list)
+                {
+                    list_del(&umBuffer->list);
+                    fsm_pkt_destroy(umBuffer->pkt);
+                    fsm_mem_free(umBuffer);
+                    fsm_printf("um tran:sdu buffer is realeasing\n");
+                    if(list_empty(&umTxIns->umSduBuffer.list))
+                        break;
+                }
+            }
+            fsm_printf("um instance  has released(rbid is %d)\n",umTxIns->rbid);
+            fsm_mem_free(umTxIns);
+            if(list_empty(&SV(vUm_tx_ins).umTxList))
+                break;
+        }
+    }
+//释放邋TM发送实体
+    if(!list_empty(&SV(vTm_tx_ins).tmTxList))
+    {
+        list_for_each_entry_safe(tmTxIns,tempTtIns, &SV(vTm_tx_ins).tmTxList,tmTxList)
+        {
+            list_del(&tmTxIns->tmTxList);
+            if(!list_empty(&tmTxIns->tmSduBuffer.list))
+            {
+                list_for_each_entry_safe(buffer,tempBuffer, &tmTxIns->tmSduBuffer.list,list)
+                {
+                    list_del(&buffer->list);
+                    fsm_pkt_destroy(buffer->pkt);
+                    fsm_mem_free(buffer);
+                    fsm_printf("tm:sdu buffer is realeasing\n");
+                    if(list_empty(&tmTxIns->tmSduBuffer.list))
+                        break;
+                }
+            }
+            if( tmTxIns->pbCh == 0)
+                fsm_printf("CCCH recv has released\n");
+            else if(tmTxIns->pbCh == 1)
+                fsm_printf("PCCH has released\n");
+            else
+                fsm_printf("BCCH has released\n");
+            fsm_mem_free(tmTxIns);
+            if(list_empty(&SV(vTm_tx_ins).tmTxList))
+                break;
+        }
+    }
+
+//释放邋TM接受实体
+    if(!list_empty(&SV(vTm_rx_ins).tmRxList))
+    {
+        list_for_each_entry_safe(tmRxIns,tempTrIns, &SV(vTm_rx_ins).tmRxList,tmRxList)
+        {
+            list_del(&tmRxIns->tmRxList);
+            if( tmRxIns->pbCh == 0)
+                fsm_printf("CCCH tran has released\n");
+            else if(tmRxIns->pbCh == 1)
+                fsm_printf("PCCH has released\n");
+            else
+                fsm_printf("BCCH has released\n");
+            fsm_mem_free(tmRxIns);
+            if(list_empty(&SV(vTm_rx_ins).tmRxList))
+                break;
+        }
+    }
+    fsm_printf("rlc has closed \n");
+    FOUT;
+}
+
+/***
+Handle the ioctl commands
+****/
+static void rlc_ioctrl_handler(void)
+{
+    FIN(rlc_ioctrl_handler());
+    switch(fsm_ev_ioctrl_cmd())
+    {
+    case CRLC_CONFIG_REQ:
+        fsm_printf("\nCRLC_CONFIG_REQ has received\n");
+        PCRLC_CONFIG_REQ();
+        FOUT;
+    case CRLC_BULID_REQ:
+        fsm_printf("\nCRLC_BULID_REQ has received\n");
+        PCRLC_BULID_REQ();
+        FOUT;
+    case CRLC_DEACT_REQ:
+        fsm_printf(" \nCRLC_DEACT_REQ has received\n");
+        PCRLC_DEACT_REQ();
+        FOUT;
+    case CRLC_SUSPEND_REQ:
+        fsm_printf("\nCRLC_SUSPEND_REQ has received\n");
+        PCRLC_SUSPEND_REQ();
+        FOUT;
+    case CRLC_RESUME_REQ:
+        fsm_printf("\nCRLC_RESUME_REQ has received\n");
+        PCRLC_RESUME_REQ();
+        FOUT;
+    case  PRLC_DISC_REQ:
+        PPRLC_DISC_REQ();
+        FOUT;
+    case  MRLC_TRANSOP_IND :
+        fsm_printf("\nMRLC_TRANSOP_IND  has received\n");
+        PMRLC_TRANSOP_IND();
+        FOUT;
+    default:
+        fsm_printf("unidentified ioctrl command!\n");
+    }
+    FOUT;
+}
+
+
+/****
+Find instance according to rbid
+****/
+void  findInsByRbid(u8 rbid,void **up, void **down , RlcMode *mode)   //
+{
+    struct list_head* pos;
+    struct  AM_Instance * amIns;
+    struct  UM_RX_Instance *umRxIns;
+    struct  UM_TX_Instance *umTxIns;
+    TM_RX_Instance *tmRxIns;
+    TM_TX_Instance *tmTxIns;
+    FIN(findInsByRbid());
+    SV_PTR_GET(rlc_sv);
+    *up = *down = NULL;
+    *mode = 0;
+    if (!list_empty(&SV(vTm_tx_ins).tmTxList))
+    {
+        list_for_each(pos,&SV(vTm_tx_ins).tmTxList)
+        {
+            tmTxIns= list_entry(pos,struct TM_TX_Instance,tmTxList);
+            if(tmTxIns->rbId == rbid)
+            {
+                *up = (void*)tmTxIns;
+                *mode = TM_MODE;
+            }
+        }
+    }
+    if (!list_empty(&SV(vTm_rx_ins).tmRxList))
+    {
+        list_for_each(pos,&SV(vTm_rx_ins).tmRxList)
+        {
+            tmRxIns = list_entry(pos,struct  TM_RX_Instance,tmRxList);
+            if(tmRxIns->rbId == rbid)
+            {
+                *down = (void*)tmRxIns;
+                *mode = TM_MODE;
+            }
+        }
+    }
+    if(*mode == TM_MODE)
+        FOUT;
+    if (!list_empty(&SV(vUm_tx_ins).umTxList))
+    {
+        list_for_each(pos,&SV(vUm_tx_ins).umTxList)
+        {
+            umTxIns= list_entry(pos,struct UM_TX_Instance,umTxList);
+            if(umTxIns->rbid == rbid)
+            {
+                *up =  (void*)umTxIns;
+                *mode = UM_MODE;
+            }
+        }
+    }
+    if(!list_empty(&SV(vUm_rx_ins).umRxList))
+    {
+        list_for_each(pos,&SV(vUm_rx_ins).umRxList)
+        {
+            umRxIns = list_entry(pos,struct  UM_RX_Instance,umRxList);
+            if(umRxIns->rbId == rbid)
+            {
+                *down = (void*)umRxIns;
+                *mode = UM_MODE;
+            }
+        }
+    }
+    if(*mode == UM_MODE)
+        FOUT;
+    if (!list_empty(&SV(vAm_ins).amList))
+    {
+        list_for_each(pos,&SV(vAm_ins).amList)
+        {
+            amIns = list_entry(pos,struct AM_Instance,amList);
+            if(amIns->rbId == rbid)
+            {
+                *mode = AM_MODE;
+                *up = *down =  (void*)amIns;
+            }
+        }
+    }
+    FOUT;
+}
+
+/***
+Find instance according to lcid
+****/
+void  findInsBylcid(u8 lcid, void **up, void**down, RlcMode *mode)
+{
+    struct list_head* pos;
+    struct  AM_Instance * amIns;
+    struct  UM_RX_Instance *umRxIns;
+    struct  UM_TX_Instance *umTxIns;
+    TM_RX_Instance *tmRxIns;
+    TM_TX_Instance *tmTxIns;
+    FIN(findInsBylcid());
+    SV_PTR_GET(rlc_sv);
+    *up = *down = NULL;
+    *mode = 0;
+    if (!list_empty(&SV(vTm_tx_ins).tmTxList))
+    {
+        list_for_each(pos,&SV(vTm_tx_ins).tmTxList)
+        {
+            tmTxIns= list_entry(pos,struct TM_TX_Instance,tmTxList);
+            if(tmTxIns->lcId== lcid)
+            {
+                *mode = TM_MODE;
+                *up =  (void*)tmTxIns;
+                //fsm_printf("tm instance\n");
+            }
+        }
+    }
+    if (!list_empty(&SV(vTm_rx_ins).tmRxList))
+    {
+        list_for_each(pos,&SV(vTm_rx_ins).tmRxList)
+        {
+            tmRxIns = list_entry(pos,struct  TM_RX_Instance,tmRxList);
+            if(tmRxIns->lcId == lcid)
+            {
+                *mode = TM_MODE;
+                *down =  (void*)tmRxIns;
+                //fsm_printf("tm instance\n");
+            }
+        }
+    }
+    if(*mode == TM_MODE)
+        FOUT;
+    if (!list_empty(&SV(vUm_tx_ins).umTxList))
+    {
+        list_for_each(pos,&SV(vUm_tx_ins).umTxList)
+        {
+            umTxIns= list_entry(pos,struct UM_TX_Instance,umTxList);
+            if(umTxIns->lcid == lcid)
+            {
+                *mode = UM_MODE;
+                *up =  (void*)umTxIns;
+            }
+        }
+    }
+    if(!list_empty(&SV(vUm_rx_ins).umRxList))
+    {
+        list_for_each(pos,&SV(vUm_rx_ins).umRxList)
+        {
+            umRxIns = list_entry(pos,struct  UM_RX_Instance,umRxList);
+            if(umRxIns->lcId == lcid)
+            {
+                *mode = UM_MODE;
+                *down =  (void*)umRxIns;
+            }
+        }
+    }
+    if(*mode == UM_MODE)
+        FOUT;
+    if (!list_empty(&SV(vAm_ins).amList))
+    {
+        list_for_each(pos,&SV(vAm_ins).amList)
+        {
+            amIns = list_entry(pos,struct AM_Instance,amList);
+            if(amIns->lcId == lcid)
+            {
+                *mode = AM_MODE;
+                *up = *down =  (void*)amIns;
+                //      fsm_printf("am instance(lcid is %d)\n",lcid);
+            }
+        }
+    }
+    FOUT;
+}
+
+void * findInsByCode(int code, RlcTimerType * timer)
+{
+    struct list_head* pos;
+    struct  AM_Instance * amIns;
+    struct  UM_RX_Instance *umRxIns;
+    FIN(findInsByCode());
+    SV_PTR_GET(rlc_sv);
+    if(!list_empty(&SV(vUm_rx_ins).umRxList))
+    {
+        list_for_each(pos,&SV(vUm_rx_ins).umRxList)
+        {
+            umRxIns = list_entry(pos,struct  UM_RX_Instance,umRxList);
+            if(umRxIns->reorderTimerCode == code)
+            {
+                *timer = UM_REORDER;
+                return (void*)umRxIns;
+            }
+        }
+    }
+    if (!list_empty(&SV(vAm_ins).amList))
+    {
+        list_for_each(pos,&SV(vAm_ins).amList)
+        {
+            amIns = list_entry(pos,struct AM_Instance,amList);
+            if(amIns->pollRetxTimerCode == code)
+            {
+                *timer = POLL_RETX;
+                return (void*)amIns;
+            }
+            if(amIns->reorderTimerCode == code)
+            {
+                *timer = AM_REORDER;
+                return (void*)amIns;
+            }
+            if(amIns->statProhTimerCode == code)
+            {
+                *timer = STAT_PRO;
+                return (void*)amIns;
+            }
+        }
+    }
+    else
+        return NULL;
+}
+
+bool isInsideTranWin(struct AM_Instance *amIns, SequenceNumber SN)
+{
+    return((amIns->vt_a <= SN)&&(SN < amIns->vt_ms));
+}
+
+bool isInsideAmRecvWin(struct AM_Instance * amIns, SequenceNumber SN)
+{
+    SequenceNumber upper,upperMode;
+    upper = amIns->vr_r + 512;
+    upperMode = upper % 1024;
+    //fsm_printf("the upper is %d, upperMode is %d\n",upper, upperMode);
+    return(((amIns->vr_r <= SN)&&(SN < upper))||(((upperMode - 512) < SN )&&(SN < upperMode)));
+}
+bool isInsideUmRecvWin(struct UM_RX_Instance* umRxIns, SequenceNumber SN)
+{
+    short base,baseMode,temp;
+    if(umRxIns->snFiledLength == 5)
+    {
+        temp = base = umRxIns->vr_uh - 16;
+        if(base < 0)
+            temp = -base;
+        baseMode = temp % 32;
+        fsm_printf("baseMode is %d\n",baseMode);
+        temp = SN;
+        return (((base <= temp) && (temp  < umRxIns->vr_uh))||((baseMode <= temp)&&(temp < baseMode + 16)));
+
+    }
+    else
+    {
+        base = umRxIns->vr_uh - 512;
+        if(base < 0)
+            temp = -base;
+        baseMode = base % 1024;
+        temp = SN;
+        return (((base <= temp ) && (temp  < umRxIns->vr_uh))||((baseMode <= temp )&&(SN < baseMode + 512)));
+    }
+}
+
+bool isOrderedUm(struct UM_RX_Instance* umRxIns, SequenceNumber SN)
+{
+    short base;
+    if(umRxIns->snFiledLength == 5)
+        base = umRxIns->vr_uh - 16;
+    else
+        base = umRxIns->vr_uh - 512;
+    return ((base <= SN )&&(SN < umRxIns->vr_uh));
+}
+
+/****
+Count the number of indicators(E + LI) of SDUs in a PDU segment
+***/
+u16 countSegInd(FSM_PKT *pkt)
+{
+    u16 count = 0;
+    RLC_AMPDU_seg_exthead* head = (RLC_AMPDU_seg_exthead*)pkt->data;
+    RLC_AMDPDU_seg_ind *ind = (RLC_AMDPDU_seg_ind*)(head + 1);
+    if(1 == head->fhead.E )
+    {
+        ++count;
+        while(1 == (ind++)->E)
+            ++count;
+    }
+    return count;
+}
+/***
+assamble the segment received into buffer
+***/
+void assamble_segment(AmBuffer *ambuf, FSM_PKT *pkt)
+{
+	RLC_AMPDU_seg_exthead* exthead = (RLC_AMPDU_seg_exthead* )pkt->data;
+	u16 headLen = 4 + 2*countSegInd(ambuf->pkt);
+	u32 posStart  =  exthead->SO;
+	u32 posEnd = posStart + pkt->len - headLen;
+	char *pospkt = (char*)pkt->data;
+	char *posbuf = (char*)ambuf->pkt->data;
+	int i, j,k, datalen = 0;
+	u16 flag = 0;
+	FSM_PKT*pkptr;
+	pospkt = pospkt + headLen;
+	fsm_printf("the packet data is %s\n", pospkt);
+	posbuf = posbuf + headLen;
+	fsm_printf("the buffer data is %s\n", posbuf);
+
+	for(i = 0; i < ambuf->segnum; ++i)
+		{
+			//接收到的分段重复，丢弃
+			if((ambuf->segStart[i] <= posStart) &&(posEnd <= ambuf->segEnd[i] ))
+			{
+				fsm_printf("this segment has been received\n");
+				fsm_pkt_destroy(pkt);
+				FOUT;
+			}
+		}
+	if((ambuf->datalen)||(ambuf->segEnd[ambuf->segnum - 1] > posEnd))
+	{		
+		//接收分段不重复，放入buffer中
+		posbuf = posbuf + posStart;
+		fsm_mem_cpy(posbuf, pospkt, pkt->len);
+		fsm_pkt_destroy(pkt);
+		//更新buffer中的分段变量(具体情况见重复分段图)
+		
+		if((ambuf->segStart[0] > 0)&&(posEnd < ambuf->segStart[1]))
+		{
+			//情况1:第一个分段之前没接收到，接收的分段在seg[0]之前
+			if((ambuf->segStart[0] > posStart)&&(ambuf->segStart[0] > posEnd))
+			{
+				for(i = ambuf->segnum - 1; i >= 0; --i)
+				{
+					ambuf->segEnd[i+1] = ambuf->segEnd[i];
+					ambuf->segStart[i+1] = ambuf->segStart[i];
+				}
+				ambuf->segStart[0] = posStart;
+				ambuf->segEnd[0] = posEnd;
+				ambuf->segnum++;
+				FOUT;
+			}
+			//情况2:
+			if((posStart < ambuf->segStart[0] )&&(ambuf->segStart[0] < posEnd)&&(posEnd <= ambuf->segEnd[0]))
+			{
+				ambuf->segStart[0] = posStart;
+				FOUT;
+			}
+			//情况3:
+			if(( posStart <= ambuf->segStart[0])&&(ambuf->segStart[0] < posEnd)&&\
+				(posStart < ambuf->segEnd[0])&&(ambuf->segEnd[0] < posEnd)&&(posEnd < ambuf->segStart[1]))
+			{
+				ambuf->segStart[0] = posStart;
+				ambuf->segEnd[0] = posEnd;
+				FOUT;
+			}			
+		}
+		//收到的分段起始位置在中间
+		for(i = 0; i < ambuf->segnum - 1; ++i)
+		{
+			//情况4;
+			if((ambuf->segEnd[i] < posStart)&&(posStart < ambuf->segStart[i + 1])&&\
+				(ambuf->segEnd[i] < posEnd)&&(posEnd < ambuf->segStart[i + 1]))
+			{
+				for(j = ambuf->segnum - 1; j > i; --j)
+				{
+					ambuf->segEnd[j+1] = ambuf->segEnd[j];
+					ambuf->segStart[j+1] = ambuf->segStart[j];
+				}
+				ambuf->segStart[j + 1] = posStart;
+				ambuf->segEnd[j + 1] = posEnd;
+				ambuf->segnum++;
+				FOUT;				
+			}
+			//接收分段起始在已收分段里面
+			else if((ambuf->segStart[i] <=  posStart) &&(posStart <= ambuf->segEnd[i]))
+			{				
+				for(j = i + 1; j < ambuf->segnum; ++j)
+				{	//情况5:
+					if((ambuf->segStart[j] <= posEnd )&&(posEnd <= ambuf->segEnd[j]))
+					{
+						ambuf->segEnd[i] = ambuf->segEnd[j];
+						for(; i < ambuf->segnum; ++j, ++i)
+						{
+							if(j < ambuf->segnum)
+							{
+								ambuf->segEnd[i] = ambuf->segEnd[j];
+								ambuf->segStart[i] = ambuf->segStart[j];
+							}
+							else
+							{
+								ambuf->segEnd[i] = -1;
+								ambuf->segStart[i] = -1;
+							}
+						}
+						ambuf->segnum  -= j - i;
+						FOUT;									
+					}
+					//情况6:
+					else if((ambuf->segEnd[j - 1] <= posEnd)&&(posEnd < ambuf->segStart[j]))
+					{
+						ambuf->segEnd[i] = posEnd;
+						--j;
+						for(; i < ambuf->segnum; ++j, ++i)
+						{
+							if(j < ambuf->segnum)
+							{
+								ambuf->segEnd[i] = ambuf->segEnd[j];
+								ambuf->segStart[i] = ambuf->segStart[j];
+							}
+							else
+							{
+								ambuf->segEnd[i] = -1;
+								ambuf->segStart[i] = -1;
+							}
+						}
+						ambuf->segnum  -= j - i;
+						FOUT;															
+					}
+				}
+			}
+			
+			//接收分段起始在已收分段之间
+			else if((ambuf->segEnd[i] <=  posStart) &&(posStart <= ambuf->segStart[i + 1]))
+			{				
+				for(j = i + 1; j < ambuf->segnum; ++j)
+				{	//情况7:
+					if((ambuf->segStart[j] <= posEnd )&&(posEnd <= ambuf->segEnd[j]))
+					{
+						ambuf->segStart[++i] = posStart;
+						ambuf->segEnd[i] = ambuf->segEnd[j];
+						for(; i < ambuf->segnum; ++j, ++i)
+						{
+							if(j < ambuf->segnum)
+							{
+								ambuf->segEnd[i] = ambuf->segEnd[j];
+								ambuf->segStart[i] = ambuf->segStart[j];
+							}
+							else
+							{
+								ambuf->segEnd[i] = -1;
+								ambuf->segStart[i] = -1;
+							}
+						}
+						ambuf->segnum  -= j - i;
+						FOUT;									
+					}
+					//情况8:
+					else if((ambuf->segEnd[j - 1] <= posEnd)&&(posEnd < ambuf->segStart[j]))
+					{
+						ambuf->segStart[++i] = posStart;
+						ambuf->segEnd[i] = posEnd;
+						--j;
+						for(; i < ambuf->segnum; ++j, ++i)
+						{
+							if(j < ambuf->segnum)
+							{
+								ambuf->segEnd[i] = ambuf->segEnd[j];
+								ambuf->segStart[i] = ambuf->segStart[j];
+							}
+							else
+							{
+								ambuf->segEnd[i] = -1;
+								ambuf->segStart[i] = -1;
+							}
+						}
+						ambuf->segnum  -= j - i;
+						FOUT;															
+					}
+				}
+				if(flag)
+				{
+				
+				}
+			}			
+		}
+		
+	}
+	//还没接收到最后一个分段
+	else
+	{     //接收到的报文是最后一个分段
+		if((exthead->LSF == 1)||(ambuf->segEnd[ambuf->segnum - 1] < posEnd))
+		{
+			//将原pdu分段转移到更大的分段中
+			datalen = pkt->len + exthead->SO;
+			pkptr = fsm_pkt_create(datalen + fsm_skb_headroom(pkt));
+			fsm_mem_cpy(pkptr->data, ambuf->pkt->data, ambuf->pkt->len);
+			fsm_skb_put(pkptr, datalen);
+			fsm_pkt_destroy(ambuf->pkt);
+			ambuf->pkt = pkptr;
+			//将新接收到的pdu复制到新的pdu中
+			posbuf = (char*)pkptr->data;
+			posbuf = posbuf + headLen + posStart;
+			fsm_mem_cpy(posbuf, pospkt, pkt->len);
+			fsm_pkt_destroy(pkt);
+		}
+		if(exthead->LSF == 1)
+			ambuf->datalen = datalen;
+			//最后一个分段与之前的不重复
+			if(ambuf->segEnd[ambuf->segnum -1] < posStart)
+			{
+				ambuf->segEnd[ambuf->segnum] = posEnd;
+				ambuf->segStart[ambuf->segnum]  = posStart;
+				ambuf->segnum++;
+				FOUT;
+			}
+			else
+			{
+				for(i = ambuf->segnum - 1; i >0 ; --i)
+				{
+					//情况10:
+					if((ambuf->segStart[i] <= posStart)&&(posStart <= ambuf->segEnd[i]))
+					{
+						ambuf->segEnd[i] = posEnd;
+						ambuf->segnum = i;
+						FOUT;
+					}
+					//情况11:
+					else if((ambuf->segEnd[i - 1] < posStart)&&(posStart <= ambuf->segStart[i]))
+					{
+						ambuf->segStart[i] = posStart;
+						ambuf->segEnd[i] = posEnd;
+						ambuf->segnum = i;
+						FOUT;
+					}
+					else
+						ambuf->segStart[i] = ambuf->segEnd[i] = -1;
+				}
+				if(posStart > ambuf->segStart[0])
+				{
+					ambuf->segEnd[0] = posEnd;
+					ambuf->segnum = 1;
+					FOUT;
+				}
+				else
+				{
+					ambuf->segStart[0]  = posStart;
+					ambuf->segEnd[0] = posEnd;
+					ambuf->segnum = 1;
+					FOUT;
+				}
+			}
+
+	}
+}
+
+
+
+/***张义: 轮询，重传，发送状态报告 ***/
+/***
+//组装NACK和E1
+***/
+void Assemble_Nack(struct Buffer *ctrlBf,unsigned short *ctrlHdr,unsigned short *ptr,
+                   unsigned short *nptr,unsigned int size,unsigned int *pduLen,unsigned short sn)
+{
+    int i = 0;
+    //填NACK_SN
+    if( *ptr == 16 )
+    {
+        fsm_mem_cpy(ctrlBf->pkt->tail,ctrlHdr,2);//将ctrlHdr填到pkt数据域
+        fsm_skb_put(ctrlBf->pkt,2);
+        *pduLen += 2;
+        *ctrlHdr = 0x0000;
+        *ptr = 0;
+    }
+    if( *ptr <= 6 )
+    {
+        *ctrlHdr += sn<<(6-*ptr);
+        *ptr += 10;
+        *nptr = 0;
+    }
+    else
+    {
+        *ctrlHdr += sn>>(*ptr-6);
+        *nptr = 16 - *ptr;
+        *ptr = 0;
+
+        fsm_mem_cpy(ctrlBf->pkt->tail,ctrlHdr,2);//将ctrlHdr填到pkt数据域
+        fsm_skb_put(ctrlBf->pkt,2);
+        *pduLen += 2;
+        *ctrlHdr = 0x0000;
+
+        *ctrlHdr = (sn&(0xffff>>(6+*nptr)))<<(6+*nptr);
+        *ptr += 10 - *nptr;
+        *nptr = 0;
+    }//NACK_SN填完
+    if( *ptr == 16 )
+    {
+        fsm_mem_cpy(ctrlBf->pkt->tail,ctrlHdr,2);//将ctrlHdr填到pkt数据域
+        fsm_skb_put(ctrlBf->pkt,2);
+        *pduLen += 2;
+        *ctrlHdr = 0x0000;
+        *ptr = 0;
+    }
+}
+/***
+//组装NACK和E1、E2和SoStart、SoEnd
+***/
+void Assemble_Nack_Seg(struct Buffer *ctrlBf,unsigned short *ctrlHdr,unsigned short *ptr,
+                       unsigned short *nptr,unsigned int size,unsigned int *pduLen,unsigned short sn,
+                       unsigned short sostart,unsigned short soend)
+{
+    //填NACK_SN
+    Assemble_Nack(ctrlBf,ctrlHdr,ptr,nptr,size,pduLen,sn);
+    //填E1
+    if( *ptr == 16 )
+    {
+        fsm_mem_cpy(ctrlBf->pkt->tail,ctrlHdr,2);//将ctrlHdr填到pkt数据域
+        fsm_skb_put(ctrlBf->pkt,2);
+        *pduLen += 2;
+        *ctrlHdr = 0x0000;
+        *ptr = 0;
+    }
+    if(((*ptr+32)%8==0&&*pduLen+(*ptr+32)/8<size)||((*ptr+32)%8!=0&&*pduLen+(*ptr+32)/8+1<size))
+    {
+        *ctrlHdr |= 0x0001<<(15-*ptr); //填E1为1
+    }
+    else
+    {
+        *ctrlHdr &= ~(0x0001<<(15-*ptr)); //填E1为0
+    }
+    *ptr+=1;
+
+    //填E2
+    if( *ptr == 16 )
+    {
+        fsm_mem_cpy(ctrlBf->pkt->tail,ctrlHdr,2);//将ctrlHdr填到pkt数据域
+        fsm_skb_put(ctrlBf->pkt,2);
+        *pduLen += 2;
+        *ctrlHdr = 0x0000;
+        *ptr = 0;
+    }
+    *ctrlHdr |= 0x0001<<(15-*ptr); //填E2为1
+    *ptr+=1;
+
+    //填SOstart
+    if( *ptr == 16 )
+    {
+        fsm_mem_cpy(ctrlBf->pkt->tail,ctrlHdr,2);//将ctrlHdr填到pkt数据域
+        fsm_skb_put(ctrlBf->pkt,2);
+        *pduLen += 2;
+        *ctrlHdr = 0x0000;
+        *ptr = 0;
+    }
+    if( *ptr <= 1 )
+    {
+        *ctrlHdr += sostart<<(1-*ptr);
+        *ptr += 15;
+    }
+    else
+    {
+        *ctrlHdr += sostart>>(*ptr-1);
+        fsm_mem_cpy(ctrlBf->pkt->tail,ctrlHdr,2);//将ctrlHdr填到pkt数据域
+        fsm_skb_put(ctrlBf->pkt,2);
+        *pduLen += 2;
+        *ctrlHdr = 0x0000;
+        *ctrlHdr += (sostart&(0xffff>>(17-*ptr)))<<(17-*ptr);
+        *ptr = *ptr-1;
+    }
+
+    //填SOend
+    if( *ptr == 16 )
+    {
+        fsm_mem_cpy(ctrlBf->pkt->tail,ctrlHdr,2);//将ctrlHdr填到pkt数据域
+        fsm_skb_put(ctrlBf->pkt,2);
+        *pduLen += 2;
+        *ctrlHdr = 0x0000;
+        *ptr = 0;
+    }
+    if( *ptr <= 1 )
+    {
+        *ctrlHdr += soend<<(1-*ptr);
+        *ptr += 15;
+    }
+    else
+    {
+        *ctrlHdr += soend>>(*ptr-1);
+        fsm_mem_cpy(ctrlBf->pkt->tail,ctrlHdr,2);//将ctrlHdr填到pkt数据域
+        fsm_skb_put(ctrlBf->pkt,2);
+        *pduLen += 2;
+        *ctrlHdr = 0x0000;
+        *ctrlHdr += (soend&(0xffff>>(17-*ptr)))<<(17-*ptr);
+        *ptr = *ptr-1;
+    }
+    if( *ptr == 16 )
+    {
+        fsm_mem_cpy(ctrlBf->pkt->tail,ctrlHdr,2);//将ctrlHdr填到pkt数据域
+        fsm_skb_put(ctrlBf->pkt,2);
+        *pduLen += 2;
+        *ctrlHdr = 0x0000;
+        *ptr = 0;
+    }
+}
+/***
+//获取NackSn，在rlc_ctrl_pkt_recv()中调用
+***/
+unsigned short getNackSn(unsigned int * pduLen,unsigned short *amHdr,FSM_PKT * pkt,unsigned short * ptr)
+{
+    unsigned short nackSn = 0;
+    unsigned short sptr = 0;
+    if( *ptr == 0 ) //如果剩余位数为0就再从pkt数据部分取2字节数据
+    {
+        getNewData(ptr,pduLen,pkt,amHdr);
+    }
+
+    if( *ptr >= 10 )
+    {
+        nackSn += ((*amHdr)&(0xffc0>>(16-*ptr)))>>(*ptr-10);  //取10位NACK_SN
+        *ptr -= 10;
+    }
+    else
+    {
+        nackSn += ((*amHdr)&(0xffff>>(16-*ptr)))<<(10-*ptr);
+        sptr = *ptr;
+        *ptr = 0;
+        getNewData(ptr,pduLen,pkt,amHdr);
+        if( *ptr == 8 )
+        {
+            nackSn += ((*amHdr)&(0xff>>(sptr-2)<<(sptr+6)))>>(sptr+6);
+            *ptr -= 10 - sptr;
+        }
+        else  //即*ptr == 16
+        {
+            nackSn += ((*amHdr)&(0xffff>>(sptr+6)<<(sptr+6)))>>(sptr+6);
+            *ptr -= 10 - sptr;
+        }
+    }
+    return nackSn;
+}
+/***
+//从pkt->data取新数据赋给amHdr，在rlc_ctrl_pkt_recv()中调用
+***/
+void getNewData(unsigned short *ptr,unsigned int *pduLen,FSM_PKT * pkt,unsigned short *amHdr)
+{
+    unsigned char mhdr = 0x00;
+    *amHdr = 0x0000;
+    if( *pduLen >= 2 )
+    {
+        *ptr = 16;
+        fsm_mem_cpy(amHdr,pkt->data,2);
+        fsm_skb_pull(pkt,2);
+        *pduLen -= 2;
+    }
+    else if( *pduLen == 1 )
+    {
+        *ptr = 8;
+        fsm_mem_cpy(&mhdr,pkt->data,1);
+        fsm_skb_pull(pkt,1);
+        *amHdr = (unsigned short)mhdr;
+        *amHdr <<= 8;
+        *pduLen--;
+    }
+}
+/***
+//获取SOstart和SOend，在rlc_ctrl_pkt_recv()中调用
+***/
+unsigned short getSO(unsigned short *ptr,unsigned short *amHdr,unsigned int *pduLen,FSM_PKT *pkt)
+{
+    unsigned short SO = 0;
+    unsigned short soptr = 0;
+    if( *ptr == 0 )
+        getNewData(ptr,pduLen,pkt,amHdr);
+    if( *ptr >= 15 )
+    {
+        SO += ((*amHdr)&(0xfffe>>(16-*ptr)))>>(*ptr-15);
+        *ptr -= 15;
+    }
+    else
+    {
+        SO += ((*amHdr)&(0xffff>>(16-*ptr)))<<(15-*ptr);
+        soptr = *ptr;
+        *ptr = 0;
+        getNewData(ptr,pduLen,pkt,amHdr);
+        if( *ptr == 8 )
+        {
+            SO += ((*amHdr)&(0xff>>(soptr-7)<<(soptr+1)))>>(soptr+1);
+            *ptr -= 15 - soptr;
+        }
+        else //即*ptr == 16
+        {
+            SO += ((*amHdr)&(0xffff>>(soptr+1)<<(soptr+1)))>>(soptr+1);
+            *ptr -= 15 - soptr;
+        }
+    }
+    return SO;
+}
+
+void rlc_ctrl_pkt_trans(struct AM_Instance *amIns)
+{
+    struct Buffer *ctrlBf = NULL;
+    unsigned short ctrlHdr = 0x0000;
+    unsigned char mHdr = 0x00;
+    unsigned short ptr = 0;  //记录ctrlHdr 已填的位数
+    unsigned short nptr = 0; //记录NACN_SN已填的位数
+    unsigned int pduLen = 0;  //记录已填PDU字节数
+    unsigned int size = 15;  //记录要组装的状态PDU大小
+    unsigned short sn;  //记录接收数组中空指针所对应的SN
+    int i;
+    int j;
+    unsigned short soStart;
+    unsigned short soEnd;
+    FIN(rlc_ctrl_pkt_trans());
+    //SV_PTR_GET(rlc_sv);
+    //计算状态PDU大小
+    if( amIns->vr_r < amIns->vr_h -1 )  //当前接收队列中的PDU未全部成功接收
+    {
+        for( i = amIns->vr_r; i < amIns->vr_ms; i++)
+        {
+            sn = i;
+            if( amIns->amRecvWindow[i] == NULL )
+            {
+                size += 12;
+            }
+            else //表示该PDU已经收到部分分段
+            {
+                if( amIns->amRecvWindow[i]->pktstatus != 1 )
+                {
+                    if( amIns->amRecvWindow[i]->segStart[0] > 0 )
+                    {
+                        size += 42;
+                    }
+                    if( amIns->amRecvWindow[i]->pktstatus ==  2 )
+                        size += (amIns->amRecvWindow[i]->segnum - 1)*42;
+                    else if( amIns->amRecvWindow[i]->pktstatus ==  3 )
+                        size += amIns->amRecvWindow[i]->segnum*42;
+                }
+            }
+        }
+    }
+    if( size%8 == 0 )
+    {
+        size /=8;
+    }
+    else
+    {
+        size = size / 8 + 1;
+    }
+    fsm_printf("size is %d\n", size);
+    ctrlBf = (struct Buffer *)fsm_mem_alloc(sizeof(struct Buffer));
+    ctrlBf->pkt = fsm_pkt_create(size+sizeof(FSM_PKT));
+    ctrlHdr = 0x0000;	//填D/C和CPT域
+    ctrlHdr += amIns->vr_ms << 2; //填ACK_SN域
+    ptr = 14;
+
+    //if( amIns->vr_r == amIns->vr_h -1 )  //当前接收队列中的PDU都已成功接收
+    if( size == 2 )  //当前接收队列中的PDU都已成功接收
+    {
+        fsm_mem_cpy(ctrlBf->pkt->tail,&ctrlHdr,2);
+        fsm_skb_put(ctrlBf->pkt,2);
+        pduLen += 2;
+    }
+    else
+    {
+        ctrlHdr |= 0x0001<<1;	//填第一个錏1
+        ptr += 1;
+        for( i = amIns->vr_r; i < amIns->vr_ms && pduLen < size; i++ )
+        {
+            sn = i;
+            if(amIns->amRecvWindow[i] == NULL)  //表示整个PDU都没收到
+            {
+                if( ((ptr+12)%8==0&&pduLen+(ptr+12)/8<=size) || ((ptr+12)%8!=0&&pduLen+(ptr+12)/8+1<=size))
+                {
+                    Assemble_Nack(ctrlBf,&ctrlHdr,&ptr,&nptr,size,&pduLen,sn);
+                    if( ptr == 16 )
+                    {
+                        fsm_mem_cpy(ctrlBf->pkt->tail,&ctrlHdr,2);//将ctrlHdr填到pkt数据域
+                        fsm_skb_put(ctrlBf->pkt,2);
+                        pduLen += 2;
+                        ctrlHdr = 0x0000;
+                        ptr = 0;
+                    }
+                    if((ptr%8==0&&pduLen+ptr/8<size)||(ptr%8!=0&&pduLen+ptr/8+1<size))
+                    {
+                        ctrlHdr |= 0x0001<<(15-ptr); //填E1为1
+                    }
+                    else
+                    {
+                        ctrlHdr &= ~(0x0001<<(15-ptr)); //填E1为0
+                    }
+                    ptr += 1;
+
+                    if( ptr == 16 )
+                    {
+                        fsm_mem_cpy(ctrlBf->pkt->tail,&ctrlHdr,2);//将ctrlHdr填到pkt数据域
+                        fsm_skb_put(ctrlBf->pkt,2);
+                        pduLen += 2;
+                        ctrlHdr = 0x0000;
+                        ptr = 0;
+                    }
+                    ctrlHdr &= ~(0x0001<<(15-ptr));  //填E2为0
+                    ptr += 1;
+                }
+                else
+                    break;
+            }
+            else
+            {
+                if( amIns->amRecvWindow[i]->pktstatus != 1 )  //表示部分分段没有收到
+                {
+                    if( amIns->amRecvWindow[i]->segStart[0] > 0 )
+                    {
+                        soStart = 0;
+                        soEnd = amIns->amRecvWindow[i]->segStart[0];
+                        Assemble_Nack_Seg
+
+                        (ctrlBf,&ctrlHdr,&ptr,&nptr,size,&pduLen,sn,soStart,soEnd);
+                    }
+                    if( amIns->amRecvWindow[i]->pktstatus == 3 )  //表示最后一个分段没有收到
+                    {
+                        soStart = amIns->amRecvWindow[i]->segEnd[amIns->amRecvWindow[i]->segnum-1];
+                        soEnd = 0x7fff;
+                        Assemble_Nack_Seg
+
+                        (ctrlBf,&ctrlHdr,&ptr,&nptr,size,&pduLen,sn,soStart,soEnd);
+                    }
+                    for( j = 0; j < amIns->amRecvWindow[i]->segnum - 1; j++ )
+                    {
+                        soStart = amIns->amRecvWindow[i]->segEnd[j];
+                        soEnd = amIns->amRecvWindow[i]->segStart[j+1];
+                        Assemble_Nack_Seg
+
+                        (ctrlBf,&ctrlHdr,&ptr,&nptr,size,&pduLen,sn,soStart,soEnd);
+                    }
+                }
+            }
+        }
+        if( size - pduLen == 1 )
+        {
+            mHdr = (unsigned char)(ctrlHdr>>8);
+            fsm_mem_cpy(ctrlBf->pkt->tail,&mHdr,1);//将mHdr填到pkt数据域
+            fsm_skb_put(ctrlBf->pkt,1);
+            pduLen += 1;
+            mHdr = 0x00;
+            ptr = 0;
+        }
+        else if( size - pduLen == 2 )
+        {
+            fsm_mem_cpy(ctrlBf->pkt->tail,&ctrlHdr,2);//将ctrlHdr填到pkt数据域
+            fsm_skb_put(ctrlBf->pkt,2);
+            pduLen += 2;
+            ctrlHdr = 0x0000;
+            ptr = 0;
+        }
+    }
+    amIns->ctrlPduBufferNum++;
+    amIns->ctrlPduBufferSize += ctrlBf->pkt->len;
+    list_add_tail(&ctrlBf->list,&amIns->ctrlPduBuffer.list);
+    FOUT;
+}
+/***
+将发送过的SN = vts-1,或者任意没有收到ack的Pdu(在transmitted buffer)，就把PDU 转移到retxbuffer
+**/
+static void rlc_poll_retx(struct AM_Instance *amIns)
+{
+//将发送过的SN = vts-1,或者任意没有收到ack的Pdu(在transmitted buffer)，就把PDU 转移到retxbuffer
+    struct AmBuffer *amTxedBuffer = NULL;
+    struct list_head* pos = NULL;
+    FIN(rlc_poll_retx());
+    //SV_PTR_GET(rlc_sv);
+    //已发送队列不为空
+    if( !list_empty(&amIns->amTransmittedBuffer.list) )
+    {
+        for( pos = amIns->amTransmittedBuffer.list.prev; pos != &amIns->amTransmittedBuffer.list; pos = pos->prev )
+        {
+            amTxedBuffer = list_entry(pos,struct AmBuffer,list);
+            if( amTxedBuffer->SN >= amIns->vt_a && amTxedBuffer->SN < amIns->vt_s)
+            {
+                rlc_poll(amIns,amTxedBuffer->pkt);	//设置轮询位
+                //移到重传队列
+                amIns->amTransmittedBufferSize -= amTxedBuffer->pkt->len;
+                amIns->amTransmittedBufferNum--;
+                list_del(&amTxedBuffer->list);
+                list_add_tail(&amTxedBuffer->list,&amIns->amRetxBuffer.list);
+                amIns->amRetxBufferSize += amTxedBuffer->pkt->len;
+                amIns->amRetxBufferNum++;
+                break;
+            }
+        }
+    }
+    FOUT;
+}
+/***
+根据状态报告中更新seg[]
+***/
+static void rlc_poll(struct AM_Instance *amIns, FSM_PKT * pkt)
+{
+    unsigned short amHdr = 0x0000; //保存AM PDU头部
+    FIN(rlc_poll());
+    //SV_PTR_GET(rlc_sv);
+    fsm_mem_cpy(&amHdr,pkt->data,2);//取头部
+    if( (amHdr&0x2000)>>13 == 0 )
+    {
+        amHdr|=1<<13; //将polling位置1
+    }
+    fsm_mem_cpy(pkt->data,&amHdr,2);//放头部
+    amIns->pduWithoutPoll = 0;
+    amIns->byteWithoutPoll = 0;
+    amIns->pollSn=amIns->vt_s - 1;
+    if(amIns->pollRetxTimer)
+    {
+        fsm_schedule_cancel(amIns->pollRetxTimer);
+        amIns->pollRetxTimer = 0;
+    }
+    amIns->pollRetxTimer = fsm_schedule_self(amIns->pollRetxTimerValue,amIns->pollRetxTimerCode);
+    FOUT;
+}
+
+static void rlc_ctrl_pkt_recv(struct AM_Instance *amIns, FSM_PKT * pkt)
+{
+//根据状态报告中更新seg[]
+    struct list_head* pos = NULL;
+    unsigned short amHdr;
+    unsigned int pduLen;
+    SequenceNumber ackSn;
+    SequenceNumber nackSn;
+    int SOstart;
+    int SOend;
+    unsigned short ptr = 16;//记录当前头部中还没有取到的数据位数
+    unsigned short sptr = 0;//记录NACK_SN已取的位数
+    unsigned short E1E2 = 0;//E1E2两位的值
+    unsigned short eptr = 0;//记录E1E2已取的位数
+    unsigned short soptr = 0;//记录SOstart或SOend已取的位数
+    struct AmBuffer *amTxedBuffer = NULL;  //已发送队列节点
+    unsigned short E1 = 0;
+    unsigned short E2 = 0;
+    int i = 0;
+    FIN(rlc_ctrl_pkt_recv());
+    //SV_PTR_GET(rlc_sv);
+
+    pduLen=pkt->len;
+    fsm_mem_cpy(&amHdr,pkt->data,2);
+    fsm_skb_pull(pkt,2);
+    pduLen -= 2;
+    if( (amHdr&0x8000)>>15 == 0 )//DC域为控制PDU
+    {
+        ptr -= 4;
+        ackSn = (amHdr&0x0ffc)>>2;
+        ptr -= 10;
+        while( amIns->vt_a < ackSn && amIns->vt_a < amIns->vt_s)
+        {
+            if( amIns->vt_a == amIns->pollSn )
+            {
+                //停止并复位重传计时器
+                if(amIns->pollRetxTimer)
+                {
+                    fsm_schedule_cancel(amIns->pollRetxTimer);
+                    amIns->pollRetxTimer = 0;
+                }
+            }
+            else
+            {
+                //将vt_a从已发送队列删除
+                if( !list_empty(&amIns->amTransmittedBuffer.list) )
+                {
+                    list_for_each(pos,&amIns->amTransmittedBuffer.list)
+                    {
+                        amTxedBuffer = list_entry(pos,struct AmBuffer,list);
+                        if( amTxedBuffer->SN == amIns->vt_a )
+                        {
+                            amIns->amTransmittedBufferSize -= amTxedBuffer->pkt->len;
+                            amIns->amTransmittedBufferNum--;
+                            fsm_mem_free( amTxedBuffer->pkt );
+                            list_del(&amTxedBuffer->list);
+                            fsm_mem_free(amTxedBuffer);
+                            break;
+                        }
+                    }
+                }
+            }
+            amIns->vt_a++;
+        }
+
+        E1 = (amHdr&0x0002)>>1;
+        ptr -= 1;
+        while( E1 == 1 )
+        {
+            if( ptr == 0 ) //如果剩余位数为0就再从pkt数据部分取2字节数据
+            {
+                getNewData(&ptr,&pduLen,pkt,&amHdr);  //取新数据赋给amHdr
+            }
+            nackSn = getNackSn(&pduLen,&amHdr,pkt,&ptr);  //取NackSn
+            if( nackSn == amIns->pollSn )
+            {
+                //停止并复位重传计时器
+                if(amIns->pollRetxTimer)
+                {
+                    fsm_schedule_cancel(amIns->pollRetxTimer);
+                    amIns->pollRetxTimer = 0;
+                }
+            }
+            if( ptr == 0 ) //如果剩余位数为0就再从pkt数据部分取2字节数据
+            {
+                getNewData(&ptr,&pduLen,pkt,&amHdr);  //取新数据赋给amHdr
+            }
+            E1 = (amHdr&(0x8000>>(16-ptr)))>>(ptr-1);
+            ptr--;
+            if( ptr == 0 ) //如果剩余位数为0就再从pkt数据部分取2字节数据
+            {
+                getNewData(&ptr,&pduLen,pkt,&amHdr);  //取新数据赋给amHdr
+            }
+            E2 = (amHdr&(0x8000>>(16-ptr)))>>(ptr-1);
+            ptr--;
+            if( E2 == 1 )  //表示有SOstart和SOend，是AMD PDU分段
+            {
+                SOstart = getSO(&ptr,&amHdr,&pduLen,pkt);  //取SOstart
+                SOend = getSO(&ptr,&amHdr,&pduLen,pkt);  //取SOend
+                if( !list_empty(&amIns->amTransmittedBuffer.list) )
+                {
+                    list_for_each(pos,&amIns->amTransmittedBuffer.list)
+                    {
+                        amTxedBuffer = list_entry(pos,struct AmBuffer,list);
+                        if( nackSn == amTxedBuffer->SN )
+                        {
+                            amTxedBuffer->segStart[amTxedBuffer->segnum] = SOstart;
+                            if( SOend == 0x7fff ) //表示为最后一个分段
+                                amTxedBuffer->segEnd[amTxedBuffer->segnum] =
+
+                                    amTxedBuffer->pkt->len;
+                            else
+                                amTxedBuffer->segEnd[amTxedBuffer->segnum] = SOend;
+                            amTxedBuffer->segnum++;
+                            //移到重传队列
+                            amIns->amTransmittedBufferSize -= amTxedBuffer->pkt->len;
+                            amIns->amTransmittedBufferNum--;
+                            list_del(&amTxedBuffer->list);
+                            list_add_tail(&amTxedBuffer->list,&amIns->amRetxBuffer.list);
+                            amIns->amRetxBufferSize += amTxedBuffer->pkt->len;
+                            amIns->amRetxBufferNum++;
+                            break;
+                        }
+                    }
+                }
+            }
+            else  //表示没有SOstart和SOend，是AMD PDU
+            {
+                if( !list_empty(&amIns->amTransmittedBuffer.list) )
+                {
+                    list_for_each(pos,&amIns->amTransmittedBuffer.list)
+                    {
+                        amTxedBuffer = list_entry(pos,struct AmBuffer,list);
+                        if( nackSn == amTxedBuffer->SN )
+                        {
+                            amTxedBuffer->segStart[0] = 0;
+                            amTxedBuffer->segEnd[0] = amTxedBuffer->pkt->len;
+                            //移到重传队列
+                            amIns->amTransmittedBufferSize -= amTxedBuffer->pkt->len;
+                            amIns->amTransmittedBufferNum--;
+                            list_del(&amTxedBuffer->list);
+                            list_add_tail(&amTxedBuffer->list,&amIns->amRetxBuffer.list);
+                            amIns->amRetxBufferSize += amTxedBuffer->pkt->len;
+                            amIns->amRetxBufferNum++;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    FOUT;
+}
+
+
+

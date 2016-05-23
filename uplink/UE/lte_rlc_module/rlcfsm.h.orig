@@ -1,0 +1,371 @@
+#include "../fsm/fsmdec.h"
+
+#ifndef _RLCFSM_H
+#define _RLCFSM_H
+
+#include <linux/list.h>
+#include <linux/types.h>
+#include "Rlctypes.h"
+
+#define SequenceNumber  u16
+#define LenthIndct  u16
+#ifndef false
+#define false 0
+#endif
+#ifndef true
+#define true 1
+#endif
+/* The types of instances in RLC layer  */
+typedef enum {TM_MODE=1, UM_MODE=2, AM_MODE=3}RlcMode;
+
+/** Data Structures Used By RLC **/
+
+  typedef enum { FULL_SDU    = 1,
+                	 FIRST_SEGMENT  = 2,
+               		  MIDDLE_SEGMENT = 3,
+               		  LAST_SEGMENT   = 4,
+                	 ANY_SEGMENT    = 5 } PacketStatus;
+/*
+typedef struct Elm
+{
+	FSM_PKT * pkt;
+	PacketStatus  pktstatus;
+	unsigned int pos; 
+}Elm;
+*/
+/*
+typedef struct Buffer
+{
+	FSM_PKT * pkt;
+	PacketStatus  pktstatus;
+	unsigned int pos; 
+//	struct Elm element;
+	unsigned int headerlen;
+	int segStart[segNumMax];
+	int segEnd[segNumMax];
+	unsigned int segnum;
+	unsigned short SN;
+	struct list_head  list;	
+}Buffer;
+
+typedef struct RetxBuffer
+{
+	struct Buffer retxBuffer;
+	unsigned int retxCount;	
+	struct list_head  list;
+}RetxBuffer;
+
+*/
+typedef struct AmSduBuffer     //AM 新数据队列
+{
+	FSM_PKT * pkt;
+	PacketStatus  pktstatus;
+	unsigned int pos; 
+	struct list_head  list;	
+}AmSduBuffer;
+
+typedef struct AmBuffer  //已发送队列，重传队列，接受侧数据PDU队列
+{
+	FSM_PKT * pkt;
+	PacketStatus  pktstatus;
+	unsigned int pos; 
+	unsigned int headerlen;
+	int segStart[segNumMax];   //-1:无效
+	int segEnd[segNumMax];
+	unsigned int segnum;
+	unsigned short SN;
+	short retxCount;      //-1:未重传，非-1重传计数；
+	struct list_head  list;	
+}AmBuffer;
+
+typedef struct Buffer      //状态PDU对列，TM新数据队列
+{
+	FSM_PKT * pkt;
+	struct list_head  list;
+}CtrlBuffer, TmBuffer;
+
+/*typedef struct UmSduBuffer    //
+{
+	FSM_PKT * pkt;
+	PacketStatus  pktstatus;
+	unsigned int pos; 
+	struct list_head  list;	
+}UmSduBuffer;
+*/
+typedef struct UmBuffer          //UM数据队列
+{
+	FSM_PKT * pkt;
+	PacketStatus  pktstatus;
+	unsigned int pos; 
+//	unsigned int headerlen;
+	unsigned short SN;
+	struct list_head  list;	
+}UmBuffer;
+/*
+typedef struct TmBuffer
+{
+	FSM_PKT * pkt;
+	struct list_head  list;	
+}TmBuffer;
+*/
+	
+/*the struct of AM instance*/
+typedef struct AM_Instance
+{
+        u16 rnti ;             
+        u8 rbId ;             
+        u8 lcId ;             
+        /** Timers in RLC AM mode **/
+        evHandle	 pollRetxTimer ;   
+        Time  pollRetxTimerValue ; 
+        evHandle reorderTimer ;    
+        Time  reorderTimerValue ;
+        evHandle statProhTimer ;   
+        Time  statProhTimerValue ;
+        u16 currentStatVar ;  
+	unsigned short SN;
+	/**buffers in RLC AM mode  **/
+	/* Transimition buffer */
+	struct  AmSduBuffer amSduBuffer ;
+	unsigned int amSduBufferSize;
+	unsigned int amSduBufferNum;
+	
+	struct AmBuffer amtTransmittedBuffer;
+	unsigned int amTransmittedBufferSize;
+	unsigned int amTransmittedBufferNum;
+
+	struct AmBuffer amRetxBuffer;
+	unsigned int amRetxBufferSize;
+	unsigned int amRetxBufferNum;
+	
+	CtrlBuffer ctrlPduBuffer;
+	unsigned int ctrlPduBufferSize;
+	unsigned int ctrlPduBufferNum;
+
+	struct AmBuffer amRecvBuffer;
+	
+ #define AM_WINDOW_SIZE 512
+	/* transimitting window   */
+ 	struct AmBuffer *amTranWindow[AM_WINDOW_SIZE];
+	//unsigned int amTranSize;
+	/** parameters of TxWindow of AM mode  **/
+	struct AmBuffer * vt_s;
+	struct AmBuffer * vt_a;
+	struct AmBuffer * vt_ms;
+	/* Reception window  */
+	struct AmBuffer *amRecvWindow[AM_WINDOW_SIZE];
+	//unsigned int amRecvSize;
+	int segStart[segNumMax];
+	int segEnd[segNumMax];
+	/** parameters of RxWindow of AM mode **/
+	struct AmBuffer * vr_mr;
+	struct AmBuffer* vr_h;
+	struct AmBuffer * vr_x;
+	struct AmBuffer *vr_ms;
+	struct AmBuffer * vr_r;
+	
+	/**  **/
+	u16 pollPDU;    /*32PDU:组装的PDU数达到该值时触发轮询*/
+	u16 pollBYTE;    /*1000KB:组装的PDU数达到该值时触发轮询*/
+	u16 maxRetxThreshold;  /* 4:AM模式中PDU的最大重传次数*/
+
+	//uint16_t AM_Window_Size = 512;
+	
+	struct list_head  amList;
+
+}AM_Instance;
+
+/* the struct of the transimit side of UM instance*/
+typedef struct UM_TX_Instance
+{
+        u16 rnti ;              
+        u8 rbid ;              
+        u8 lcid ;              
+        /** Timers on the transimitting side of  RLC UM mode **/
+	struct UmBuffer umSduBuffer ;
+	unsigned int umSduBufferSize;
+	unsigned int umSduBufferNum;
+	unsigned short SN;
+
+	u16 snFiledLength;     // Size5/size10 :UM 模式PDU中SN域所占的bit
+        u8 CurrentStatVar ;   
+
+	struct list_head  umTxList;
+
+}UM_TX_Instance;
+
+/* the struct of the receiving side of UM instance*/
+typedef struct UM_RX_Instance
+{
+        u16 rnti ;              
+        u8 rbId ;             
+        u8 lcId ;             
+	u16 snFiledLength;     // Size5/size10 :UM 模式PDU中SN域所占的bit。
+	/** Timers in RLC UM mode **/
+        evHandle reorderTimer ;   
+        Time  reorderTimerValue ;
+	unsigned short SN;
+	struct UmBuffer umRecvBuffer ;
+	/* Reception window  */
+#define UM_WINDOW_SIZE5 		16
+#define UM_WINDOW_SIZE10	 	512
+	struct UmBuffer *umRecvWindow5[UM_WINDOW_SIZE5];
+	struct UmBuffer *umRecvWindow10[UM_WINDOW_SIZE10];
+	unsigned int umRecvSize;
+	/** parameters of RxWindow of UM mode **/
+	struct UmBuffer * vr_ur;
+	struct UmBuffer * vr_ux;
+	struct UmBuffer * vr_uh;
+
+        u8 currentStatVar ;    
+
+	struct list_head  umRxList;
+
+} UM_RX_Instance;
+
+/* the struct of the transimit side of TM instance*/
+typedef struct TM_TX_Instance
+{
+        u16 rnti ;             
+        u8 rbId ;             
+        u8 lcId ;  
+	u8 pbCh;
+        u8 currentStatVar ;    
+
+	/*  */
+	TmBuffer tmSduBuffer ;
+	unsigned int tmSduBufferSize;
+	unsigned int tmSduBufferNum;
+	
+        struct list_head  tmTxList;
+
+} TM_TX_Instance;
+
+/* the struct of the receiving side of TM instance*/
+typedef struct TM_RX_Instance
+{
+        u16 rnti ;            
+        u8 rbId ;             
+        u8 lcId ;   
+	u8 pbCh;
+        u8 currentStatVar ;    
+
+	struct list_head  tmRxList;
+
+} TM_RX_Instance;
+
+/* The status virables in RLC layer */
+typedef struct rlc_sv
+{
+	/* The type of current instance */
+	RlcMode ins_mode;
+	int 	packetType ;  //data packet or control packet
+	/* Containers and iterators of instances in RLC layer respectively */
+	u8 isBufferReq;
+	struct  AM_Instance *vAm_ins;	
+	struct  UM_RX_Instance *vUm_rx_ins;
+	struct  UM_TX_Instance *vUm_tx_ins;
+	struct  TM_RX_Instance *vTm_rx_ins;
+	struct  TM_TX_Instance *vTm_tx_ins;	
+} rlc_sv;
+
+typedef struct retxPducontext
+{
+        struct Buffer *tbuff;   //需要重传的PDU的Buffer
+        u16 segStart[segNumMax];          
+        u16 segEnd[segNumMax];
+}retxPducontext;
+
+//待重传的PDU上下文
+typedef struct pdu_context
+{
+        int Start;
+        int End;
+        int retxPdusize;
+        struct Buffer *buffer;
+}pdu_context;
+//固定头部结构体
+typedef struct _pduhdr{
+         u16 R1;
+         u16 FIfirst;
+         u16 FIsecond;
+         u16 E;
+         u16 SN;   
+}_pduhdr;
+
+//扩展头结构体
+typedef struct _pduhdrExt{
+         u16 E;
+         u16 LI;     
+}_pduhdrExt;
+
+//SDU上下文结构体
+typedef struct SDU_context{
+  struct list_head tlist;
+  struct Buffer *tbuff ;
+  int SDU_leftsize;
+  int segment;
+}SDU_context;
+
+//重组剩下的SDU上下文
+typedef struct PDULeft{
+    u16 SN_Left;
+    struct sk_buff *SDU_Left ;
+}PDULeft;
+
+//PDU上下文结构体
+typedef struct PDU_context{
+  int PDU_leftsize;
+  int PDU_SN;
+  int ElemNo;   //??????
+  int PDU_finish;
+}PDU_context;
+
+	/*** The codes of interruption ****/
+	/** IOCTL command **/
+	/* IOCTL between RLC and  RRC */
+	#define 		CRLC_CONFIG_REQ				0x24			
+	#define 		CRLC_STATUS_IND				0x25
+	#define 		CRLC_DEACT_REQ					0x26
+	#define 		CRLC_SUSPEND_REQ				0x27
+	#define 		CRLC_RESUME_REQ				0x28
+	#define		CRLC_BULID_REQ					0x29	
+	
+	/* IOCTRL between RLC and PDCP */
+	#define 		PRLC_DISC_REQ					0x20
+	#define 		PRLC_AM_DATA_CNF				0x21
+
+	/* IOCTRL between RLC and MAC */
+	#define 		MRLC_BUFREPORT_REQ			0X09
+	#define		MRLC_TRANSOP_IND				0X13
+	
+	/** Event code in RLC layer **/
+	#define 		_START_WORK					0x50
+
+	/* Timer in the instances timeout */						
+	#define		RLC_POLLRETX_TIMEOUT			0x01
+	#define 		RLC_STATPRO_TIMEOUT			0x02		 
+	#define 		RLC_AM_REORDER_TIMEOUT		0X03
+	#define 		RLC_UM_REORDER_TIMEOUT		0X04
+
+	
+/** Macro Definition **/
+//#define RCVD_CMD		(intrpt_type == FSM_EV_TYPE_PKT_REQ && intrpt_pkt_type == DYS_PKT_CMD)
+
+//#define START_WORK 	 (fsm_ev_type() == FSM_EV_TYPE_CORE &&  fsm_ev_code() == CRLC_CONFIG_REQ)
+#define RLC_PKT_FROM_LOWER  (fsm_ev_type()==FSM_EV_TYPE_PKT_IND)
+#define RLC_PKT_FROM_UPPER  (fsm_ev_type()==FSM_EV_TYPE_PKT_REQ)
+#define RLC_AM_PKT_TO_UPPER  (fsm_ev_type() == FSM_EV_TYPE_SELF && fsm_ev_code() == RLC_AM_REORDER_TIMEOUT)
+#define RLC_UM_PKT_TO_UPPER  (fsm_ev_type() == FSM_EV_TYPE_SELF && fsm_ev_code() == RLC_UM_REORDER_TIMEOUT)
+#define RLC_CTRLPKT_CREAT (fsm_ev_type() == FSM_EV_TYPE_SELF  && fsm_ev_code() ==  RLC_STATPRO_TIMEOUT)
+#define RLC_POLLRETX  (fsm_ev_type() == FSM_EV_TYPE_SELF  && fsm_ev_code() == RLC_POLLRETX_TIMEOUT )
+#define RLC_OPEN  (fsm_ev_type() == FSM_EV_TYPE_CORE && fsm_ev_code()== FSM_EV_CORE_OPEN)
+#define RLC_CLOSE  (fsm_ev_type() == FSM_EV_TYPE_CORE && fsm_ev_code() == FSM_EV_CORE_CLOSE)
+#define RLC_START_WORK  (fsm_ev_type() == FSM_EV_TYPE_SELF  && fsm_ev_code() ==  _START_WORK)
+#define RLC_SUSPEND  (fsm_ev_type() == FSM_EV_TYPE_SELF &&  fsm_ev_code() == CRLC_SUSPEND_REQ)
+#define RLC_RESUME  (fsm_ev_type() == FSM_EV_TYPE_SELF &&  fsm_ev_code() == CRLC_RESUME_REQ)
+#define RLC_DEACT  (fsm_ev_type() == FSM_EV_TYPE_SELF &&  fsm_ev_code() == CRLC_DEACT_REQ)
+#define RLC_IOCTL_ARRIVAL (fsm_ev_type() == FSM_EV_TYPE_CORE && fsm_ev_code() == FSM_EV_IOCTRL)
+void rlc_main(void);
+#define instance_create(type) ((type*)fsm_mem_alloc(sizeof(type)))
+#endif

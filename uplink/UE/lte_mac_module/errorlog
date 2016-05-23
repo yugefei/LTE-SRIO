@@ -1,0 +1,366 @@
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/fsmcore.c: In function ‘__fsm_tm_ev_add.constprop.7’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/fsmcore.c:1093:12: warning: ‘p1’ may be used uninitialized in this function [-Wuninitialized]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/fsmcore.c:1073:13: note: ‘p1’ was declared here
+In file included from /mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.h:6:0,
+                 from /mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac.c:36:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macpkfmt.h:205:2: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macpkfmt.h:213:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macpkfmt.h:214:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macscheduler.h:170:21: warning: ‘BufferSizeLevelBsrTable’ defined but not used [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macscheduler.h:179:12: warning: ‘TransportBlockSizeTable’ defined but not used [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.h:88:27: warning: ‘BackoffTable’ defined but not used [-Wunused-variable]
+In file included from /mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.h:6:0,
+                 from /mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c:7:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macpkfmt.h:205:2: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macpkfmt.h:213:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macpkfmt.h:214:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c: In function ‘MACCETA_handle’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c:19:9: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c:18:9: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c: In function ‘decomplexRarPdu’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c:35:3: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c:33:3: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c: In function ‘lteMacCEC_rntiSend’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c:122:3: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c:120:3: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c: In function ‘lteMacCEPhSend’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c:137:3: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c:135:3: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c: In function ‘lteMacCcchSend’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c:151:3: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c:172:5: warning: right shift count >= width of type [enabled by default]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c:173:5: warning: suggest parentheses around ‘+’ inside ‘<<’ [-Wparentheses]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c:153:8: warning: unused variable ‘contention_resolution’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c:151:7: warning: unused variable ‘i’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c:149:3: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c: In function ‘setMACtoRLC_IciMsg’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c:213:3: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c:211:3: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c: In function ‘setMACtoPHY_IciMsg’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c:222:3: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c:221:3: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c: In function ‘lteMacCEBSRSend’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c:232:3: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c:230:9: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c: In function ‘lteMacGetDlHeadLength’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c:286:3: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c:284:3: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c: In function ‘decomplexUeDataPdu’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c:372:3: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c:370:3: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c: In function ‘complexUeMacPdu’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c:620:3: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c:731:4: warning: suggest parentheses around assignment used as truth value [-Wparentheses]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c:746:4: warning: suggest parentheses around assignment used as truth value [-Wparentheses]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c:625:25: warning: unused variable ‘ccch_flag’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c:623:14: warning: unused variable ‘temp_size’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c:622:21: warning: unused variable ‘m_15bit_numb’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c:622:7: warning: unused variable ‘m_7bit_numb’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c:621:9: warning: unused variable ‘c_rnti’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c:620:45: warning: unused variable ‘f_flag’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c:620:24: warning: unused variable ‘total_len’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c:620:13: warning: unused variable ‘from_len’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c:618:3: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c:780:6: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c: In function ‘clean_CE_tags’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c:784:4: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c:784:4: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_pkthandler.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macscheduler.h:170:21: warning: ‘BufferSizeLevelBsrTable’ defined but not used [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macscheduler.h:179:12: warning: ‘TransportBlockSizeTable’ defined but not used [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.h:88:27: warning: ‘BackoffTable’ defined but not used [-Wunused-variable]
+In file included from /mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.h:6:0,
+                 from /mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:7:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macpkfmt.h:205:2: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macpkfmt.h:213:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macpkfmt.h:214:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c: In function ‘Init_Uemac_Scheduler’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:20:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:19:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c: In function ‘RlcRequest_arraytolist’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:45:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:44:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c: In function ‘RlcRequest_listtoarray’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:128:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:127:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c: In function ‘DoRefreshRLCBuffserRequest’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:169:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:170:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:168:5: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c: In function ‘Rlc_MacRequest_copy’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:242:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:241:5: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c: In function ‘LogicalChannel_ConfigInfo_copy’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:261:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:260:5: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c: In function ‘Mac_RlcRequest_copy’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:278:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:277:5: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c: In function ‘Mac_MacRequest_copy’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:298:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:297:5: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c: In function ‘MacBufferStatus_BSR_Info_copy’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:317:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:318:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:316:5: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c: In function ‘FlushBj’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:336:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:337:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:335:5: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c: In function ‘DoReceiveULgrant_Tbsize’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:380:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:379:5: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c: In function ‘DoReceiveRARULgrant_Tbsize’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:452:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:453:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:451:5: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c: In function ‘GetTBsize_Allocation’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:505:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:504:5: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c: In function ‘RefreshBufferStatusForBSR’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:525:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:537:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:545:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:524:5: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c: In function ‘BufferSize2BsrSize’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:578:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:577:5: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c: In function ‘LogicalChannel_ConfigInfo_Rank_Priority’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:594:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:595:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:602:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:595:63: warning: unused variable ‘temp_logicalChannel’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:593:5: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c: In function ‘PrioritySort’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:650:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:651:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:657:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:659:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:649:5: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c: In function ‘DoProduceBsr_LCGZeroToData’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:695:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:694:5: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c: In function ‘DoProduceBsr_PeriodicBSRTimer’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:733:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:732:5: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c: In function ‘DoProduceBsr_RetxBSRTimer’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:770:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:769:5: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c: In function ‘Free_Bsr_Info’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:803:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:802:5: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c: In function ‘DoResourceAllocation’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:827:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:826:5: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c: In function ‘Init_LogicalChannel_ConfigInfo’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:859:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:860:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:858:5: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c: In function ‘ResourceAllocation_Algorithm’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:912:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:913:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:920:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:911:5: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c: In function ‘Delete_LogicalChannel_ConfigInfo’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:1454:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:1455:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:1453:5: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c: In function ‘Empty_MACBuffer_Rlc’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:1486:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:1487:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:1485:5: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c: In function ‘Free_Uemac_Scheduler_Resource’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:1502:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:1501:5: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c: In function ‘GetRbsize’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:1548:5: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c: In function ‘My_Pow’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:1570:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:1569:5: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c: In function ‘My_Log2’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c:1595:5: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/mac_scheduler.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.h:88:27: warning: ‘BackoffTable’ defined but not used [-Wunused-variable]
+make[2]: Warning: File `/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c' has modification time 6.8 s in the future
+In file included from /mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.h:6:0,
+                 from /mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:8:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macpkfmt.h:205:2: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macpkfmt.h:213:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macpkfmt.h:214:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:57:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:58:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘mac_main’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:104:1: warning: label ‘_fsm_label_state0’ defined but not used [-Wunused-label]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘ue_mac_sv_init’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:201:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:201:6: warning: unused variable ‘len’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:200:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘ue_mac_sv_close’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:238:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:237:5: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘defaultconfig’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:248:4: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘macmain_defaultconfig’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:258:4: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:257:4: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘sps_defaultconfig’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:273:4: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:272:4: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘CCCH_defaultconfig’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:282:3: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:283:3: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:281:3: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:299:13: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘idle_exit’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:301:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘idle_default_handler’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:312:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:311:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘cra_default_handler’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:458:3: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘ncra_default_handler’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:479:3: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘con_default_handler’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:498:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:497:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘sendmsg3_default_handler’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:557:4: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:557:4: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘send_SR’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:581:4: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘ioctrl_handler’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:591:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘reports_handler’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:643:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘TATimer_config’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:657:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:658:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:656:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘handle_HARQ_feedback’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:672:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:673:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:671:5: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘handle_timeAlignmentTimerExpire’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:716:3: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:715:3: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘handle_PeriodicBSRTimerExpire’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:732:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:732:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘handle_RetxBSRTimerExpire’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:743:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:743:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘ue_mac_reset’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:753:5: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘ue_mac_rach_config’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:778:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:777:5: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘ue_mac_main_config’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:794:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:793:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘ue_mac_PCCH_config’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:806:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:805:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘ue_mac_BCCH_config’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:817:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:816:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘ue_mac_SPS_Config’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:828:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:827:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘ue_mac_logCh_config’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:841:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:840:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘ue_mac_lc_release’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:855:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘RandomlySelectRaPreamble’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:869:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:870:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:868:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘StartWaitingForRaResponse’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:881:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:880:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘SendRaPreamble’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:893:4: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:903:13: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘doStartNonContentionBasedRandomAccessProcedure’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:906:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:907:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:905:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:928:13: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘doStartContentionBasedRandomAccessProcedure’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:931:3: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:932:3: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:930:3: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘NC_RaResponseFailed’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:957:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:958:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:956:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘C_RaResponseFailed’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:989:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:990:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:988:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘waitsending_msg3’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:1066:3: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:1065:3: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘send_msg3’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:1082:4: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:1081:4: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘cleanharqBuff’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:1099:5: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘ContentionFailed’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:1107:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:1108:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:1106:5: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘RARTA_handleA’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:1159:3: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:1158:3: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘RARTA_handleB’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:1170:3: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:1169:3: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘print_tran_info’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:1192:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:1191:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘random_test’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:1203:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:1202:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘RA_RRCconfig_testingfun’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:1219:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:1218:5: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘testdoStartContentionBasedRandomAccessProcedure’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:1233:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘testdoStartNonContentionBasedRandomAccessProcedure’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:1243:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘stop_WRAP_timer’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:1252:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:1251:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘NCRAtoCON_testingfun’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:1261:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘stop_CR_timer’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:1270:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:1269:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘CRAtoCON_testingfun’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:1279:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘test1_idle_default_handler’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:1296:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:1295:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘test2_idle_default_handler’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:1391:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:1390:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:1448:8: warning: return type defaults to ‘int’ [-Wreturn-type]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:1448:8: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: In function ‘ioctrl_test’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:1472:2: warning: ‘return’ with no value, in function returning non-void [-Wreturn-type]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:1450:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macscheduler.h:170:21: warning: ‘BufferSizeLevelBsrTable’ defined but not used [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macscheduler.h:179:12: warning: ‘TransportBlockSizeTable’ defined but not used [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:751:13: warning: ‘ue_mac_reset’ defined but not used [-Wunused-function]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:1156:13: warning: ‘RARTA_handleA’ defined but not used [-Wunused-function]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:1167:13: warning: ‘RARTA_handleB’ defined but not used [-Wunused-function]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:299:13: warning: ‘idle_exit’ defined but not used [-Wunused-function]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS0625HQ/lte_mac_module/macfsm.c:1448:8: warning: ‘ioctrl_test’ defined but not used [-Wunused-function]
+make[2]: warning:  Clock skew detected.  Your build may be incomplete.

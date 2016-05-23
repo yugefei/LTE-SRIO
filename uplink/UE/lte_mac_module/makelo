@@ -1,0 +1,307 @@
+In file included from /mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.h:5:0,
+                 from /mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:8:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macscheduler.h:276:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macscheduler.h:277:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macscheduler.h:282:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macscheduler.h:288:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macscheduler.h:292:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macscheduler.h:293:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+In file included from /mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.h:6:0,
+                 from /mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:8:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macpkfmt.h:205:2: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macpkfmt.h:213:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macpkfmt.h:214:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:28:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:29:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:30:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:31:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:32:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:33:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:35:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:36:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:37:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:38:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:39:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:40:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:41:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:42:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:43:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:45:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:46:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:47:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:48:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:49:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:54:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:55:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:57:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:58:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:59:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:60:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:61:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:62:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:63:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:64:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:66:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:67:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:71:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:74:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:76:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:77:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:84:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:85:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:86:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:87:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:88:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:89:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:90:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:91:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘mac_main’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:99:1: warning: label ‘_fsm_label_state0’ defined but not used [-Wunused-label]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:193:13: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘ue_mac_sv_init’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:196:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:196:6: warning: unused variable ‘len’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:195:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:219:13: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘ue_mac_sv_close’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:222:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:221:5: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:230:13: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘defaultconfig’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:232:4: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:239:13: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘macmain_defaultconfig’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:242:4: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:241:4: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:254:13: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘sps_defaultconfig’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:257:4: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:256:4: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:263:13: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘CCCH_defaultconfig’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:265:3: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:281:13: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘idle_exit’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:283:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:289:13: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘idle_default_handler’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:293:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:292:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:430:13: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘cra_default_handler’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:432:3: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:451:13: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘ncra_default_handler’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:453:3: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:466:13: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘con_default_handler’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:471:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:470:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:517:13: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘sendmsg3_default_handler’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:520:4: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:520:4: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:541:13: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘send_SR’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:543:4: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:551:13: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘ioctrl_handler’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:553:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:604:13: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘TATimer_config’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:608:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:609:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:614:24: warning: assignment makes integer from pointer without a cast [enabled by default]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:607:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:619:13: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘handle_HARQ_feedback’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:623:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:624:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:622:5: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:664:13: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘handle_timeAlignmentTimerExpire’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:667:3: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:666:3: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:681:13: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘ue_mac_reset’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:683:5: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:704:13: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘ue_mac_rach_config’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:708:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:707:5: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:720:13: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘ue_mac_main_config’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:724:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:723:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:732:13: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘ue_mac_PCCH_config’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:736:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:735:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:743:13: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘ue_mac_BCCH_config’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:747:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:746:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:754:13: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘ue_mac_SPS_Config’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:758:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:757:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:767:13: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘ue_mac_logCh_config’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:771:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:770:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:780:13: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘ue_mac_lc_release’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:783:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:794:22: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘RandomlySelectRaPreamble’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:797:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:798:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:796:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:806:13: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘StartWaitingForRaResponse’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:809:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:808:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘SendRaPreamble’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:821:4: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:831:13: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘doStartNonContentionBasedRandomAccessProcedure’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:834:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:835:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:833:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:855:13: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘doStartContentionBasedRandomAccessProcedure’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:858:3: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:859:3: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:857:3: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:881:13: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘NC_RaResponseFailed’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:883:4: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:884:4: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:882:4: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:910:13: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘C_RaResponseFailed’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:913:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:914:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:912:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:987:13: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘waitsending_msg3’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:990:3: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:989:3: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1001:13: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘send_msg3’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1004:4: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1003:4: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1019:13: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘cleanharqBuff’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1021:5: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1026:13: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘ContentionFailed’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1029:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1030:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1042:8: warning: passing argument 1 of ‘fsm_schedule_cancel’ makes pointer from integer without a cast [enabled by default]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/../fsm/fsmcore.h:109:12: note: expected ‘int *’ but argument is of type ‘int’
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1028:5: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1077:13: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘RARTA_handleA’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1080:3: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1082:25: warning: assignment makes integer from pointer without a cast [enabled by default]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1079:3: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1088:13: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘RARTA_handleB’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1091:3: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1095:26: warning: assignment makes integer from pointer without a cast [enabled by default]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1090:3: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘print_tran_info’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1112:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1111:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1120:6: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘random_test’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1123:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1122:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1136:6: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘RA_RRCconfig_testingfun’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1139:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1138:5: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1151:6: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘testdoStartContentionBasedRandomAccessProcedure’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1153:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1161:6: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘testdoStartNonContentionBasedRandomAccessProcedure’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1163:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1169:6: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘stop_WRARP_timer’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1172:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1173:2: warning: passing argument 1 of ‘fsm_schedule_cancel’ makes pointer from integer without a cast [enabled by default]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/../fsm/fsmcore.h:109:12: note: expected ‘int *’ but argument is of type ‘int’
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1171:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1179:6: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘NCRAtoCON_testingfun’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1181:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1192:6: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘test1_idle_default_handler’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1196:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1195:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1287:6: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘test2_idle_default_handler’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1291:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1290:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1348:8: warning: return type defaults to ‘int’ [-Wreturn-type]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1348:8: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: In function ‘ioctrl_test’:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1372:2: warning: ‘return’ with no value, in function returning non-void [-Wreturn-type]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1350:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macscheduler.h:144:21: warning: ‘BufferSizeLevelBsrTable’ defined but not used [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macscheduler.h:153:12: warning: ‘TransportBlockSizeTable’ defined but not used [-Wunused-variable]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:681:13: warning: ‘ue_mac_reset’ defined but not used [-Wunused-function]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:831:13: warning: ‘doStartNonContentionBasedRandomAccessProcedure’ defined but not used [-Wunused-function]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1077:13: warning: ‘RARTA_handleA’ defined but not used [-Wunused-function]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1088:13: warning: ‘RARTA_handleB’ defined but not used [-Wunused-function]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:281:13: warning: ‘idle_exit’ defined but not used [-Wunused-function]
+/mnt/hgfs/vmshare/UEMAC_separateNEWS/lte_mac_module/macfsm.c:1348:8: warning: ‘ioctrl_test’ defined but not used [-Wunused-function]

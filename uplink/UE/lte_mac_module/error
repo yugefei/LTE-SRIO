@@ -1,0 +1,9 @@
+make[2]: *** 警告：文件“/mnt/hgfs/VMshare/combine/uniontestV5.2/lte_mac_module/.mac_scheduler.o.cmd”的修改时间在将来3.3
+/mnt/hgfs/VMshare/combine/uniontestV5.2/lte_mac_module/macfsm.c: 在函数‘waitsending_msg3’中:
+/mnt/hgfs/VMshare/combine/uniontestV5.2/lte_mac_module/macfsm.c:1299:39: 错误： ‘flase’未声明(在此函数内第一次使用)
+/mnt/hgfs/VMshare/combine/uniontestV5.2/lte_mac_module/macfsm.c:1299:39: 附注： 每个未声明的标识符在其出现的函数内只报告一次
+/mnt/hgfs/VMshare/combine/uniontestV5.2/lte_mac_module/macfsm.c: 在函数‘RARTA_handleB’中:
+/mnt/hgfs/VMshare/combine/uniontestV5.2/lte_mac_module/macfsm.c:1541:3: 错误： ‘else’之前没有‘if’
+make[2]: *** [/mnt/hgfs/VMshare/combine/uniontestV5.2/lte_mac_module/macfsm.o] 错误 1
+make[1]: *** [_module_/mnt/hgfs/VMshare/combine/uniontestV5.2/lte_mac_module] 错误 2
+make: *** [default] 错误 2

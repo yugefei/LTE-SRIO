@@ -1,0 +1,14 @@
+---- ra_allocation_res Matches (13 in 2 files) ----
+Macfsm.c:	SV(ra_allocation_res)=0;
+Macfsm.c:					SV(ra_allocation_res)=0;
+Macfsm.c:	if(SV(ra_allocation_res)==0)
+Macfsm.c:			SV(ra_allocation_res)=1;
+Macfsm.c:		SV(ra_allocation_res)=2;
+Macfsm.c:	fsm_printf("[UE MAC]RA ALLOCATION RESULT:%d\n",SV(ra_allocation_res));
+Macfsm.c:	if(SV(ra_allocation_res)==1)//modified by lhl 20140725
+Macfsm.c:	else if(SV(msg3_buf_ptr) != NULL && SV(ra_allocation_res)==2)  
+Macfsm.c:			fsm_printf("[LHL]C_RNTI CONTROL ELEMENT!\n",SV(ra_allocation_res));
+Macfsm.c:		SV(ra_allocation_res)=0;
+Macfsm.c:		SV(ra_allocation_res)=1;
+Macfsm.c:	SV(ra_allocation_res)=0;
+Macfsm.h:	u32 ra_allocation_res;//modified by lhl 20140725,指示当前随机接入是否为RLC request 分配了资源

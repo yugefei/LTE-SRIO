@@ -1,0 +1,6 @@
+---- send_rar_flag Matches (5 in 2 files) ----
+Macfsm.c:	SV(send_rar_flag)=1;//20150104联调测试代码，以后要去掉，标志是否发RAR，可以通过用户
+Macfsm.c:			SV(send_rar_flag)=0;
+Macfsm.c:			if(SV(send_rar_flag)!=0)//20150104联调测试错误机制，不发RAR，以后不需要if判断
+Macfsm.c:		if(SV(send_rar_flag)==0)//20150104用户空间配置不发RAR
+Macfsm.h:	u32 send_rar_flag;//20150104联调添加的调试代码，初始为1表示要发RAR，收到用户空间IOCTL后为0，不发RAR

@@ -1,0 +1,44 @@
+In file included from /mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/macfsm.h:7:0,
+                 from /mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/macfsm.c:4:
+/mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/mac_scheduler.h:156:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/mac_scheduler.h:160:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/macfsm.c: In function ‘mac_init_enter’:
+/mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/macfsm.c:90:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/macfsm.c: In function ‘mac_sv_init’:
+/mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/macfsm.c:100:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/macfsm.c:99:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/macfsm.c: In function ‘mac_close’:
+/mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/macfsm.c:117:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/macfsm.c:116:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/macfsm.c: In function ‘idle_default_handler’:
+/mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/macfsm.c:132:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/macfsm.c: In function ‘ioctrl_handler’:
+/mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/macfsm.c:161:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/macfsm.c: In function ‘handle_rlcdata_req’:
+/mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/macfsm.c:219:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/macfsm.c:218:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/macfsm.c:217:17: warning: unused variable ‘tmp_rnti’ [-Wunused-variable]
+/mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/macfsm.c: In function ‘dl_schedule’:
+/mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/macfsm.c:268:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/macfsm.c:267:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/macfsm.c:262:8: warning: unused variable ‘tempdata_ptr’ [-Wunused-variable]
+/mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/macfsm.c: In function ‘ul_schedule’:
+/mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/macfsm.c:323:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/macfsm.c:323:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/macfsm.c:321:17: warning: unused variable ‘rar_info_ptr’ [-Wunused-variable]
+/mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/macfsm.c: In function ‘handle_ra_req’:
+/mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/macfsm.c:373:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/macfsm.c:372:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/macfsm.c: In function ‘handle_ulsched_req’:
+/mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/macfsm.c:409:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/macfsm.c:408:2: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/macfsm.c: In function ‘print_tran_info’:
+/mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/macfsm.c:452:3: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+/mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/macfsm.c:451:3: warning: unused variable ‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/macfsm.c: At top level:
+/mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/macfsm.c:255:13: warning: ‘dl_schedule’ defined but not used [-Wunused-function]
+/mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/macfsm.c: In function ‘mac_main’:
+/mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/macfsm.c:243:2: warning: ‘ue_num’ may be used uninitialized in this function [-Wuninitialized]
+/mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/macfsm.c:216:8: note: ‘ue_num’ was declared here
+/mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/macfsm.c:246:13: warning: ‘rlc_req’ may be used uninitialized in this function [-Wuninitialized]
+/mnt/hgfs/vmshare/ENBMACFSM_TEST0618HQNewS/lte_mac_module/macfsm.c:213:15: note: ‘rlc_req’ was declared here

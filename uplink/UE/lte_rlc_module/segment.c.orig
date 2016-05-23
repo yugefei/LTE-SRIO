@@ -1,0 +1,1015 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+FSM_PKT * AM_segment(struct AM_Instance *amIns,u32 sizeFromMac)
+{
+   u32 size = sizeFromMac - 2;
+   int num = amIns->amSduBufferNum;
+   struct list_head *head =&(amIns->amSduBuffer.list);
+   
+   struct AmSduBuffer *amBuffer,*tempBuffer;
+   int count = 0;
+   unsigned int lastCopyLen;
+   u16 header;
+   u16 FIsecond;
+   u16 E;
+   u16 SN = amIns->SN;
+   u16 D_C = (1<<15);
+   u16 RF = 0;
+   u16 P=0;
+   u16 FIfirst = -1;
+    
+   	
+   if(!list_empty(head))
+     {
+	  list_for_each_entry(amBuffer,head,list)
+	  	{
+	         count++;
+			 num--;
+            if(size < amBuffer->pkt->len)//一个ＳＤＵ都装不下
+              {
+               
+                if(amBuffer->pktstatus ==1)
+                  {
+                    if(FIfirst == -1)
+                    {
+                      FIfirst=0;E=0;FIsecond=(1<<11);
+                     }
+					else
+                    FIsecond=(1<<11);
+                   }
+                else
+                  {
+                    if(FIfirst == -1)
+                     {
+                      FIfirst=(1<<12);E=0;FIsecond=(1<<11);
+                     }
+					else
+                    FIsecond=(1<<11);
+                   }
+				lastCopyLen = size;
+                break;
+               }
+            else if(size == amBuffer->pkt->len) //刚好一个SDU
+              {
+               
+               if(amBuffer->pktstatus ==1)
+                  {
+                    if(FIfirst == -1)
+                    {
+                      FIfirst=0;E=0; FIsecond=0;
+                     }
+					else
+                    FIsecond=0;
+                   }
+               else
+                 {  
+                    if(FIfirst == -1) 
+                     {
+                      FIfirst=(1<<12);E=0; FIsecond=0;
+                     }
+					else
+                    FIsecond=0;
+                  }
+               lastCopyLen = size;
+               break;
+              }
+           else if(size > (amBuffer->pkt->len + 2))//多个SDU
+              {
+                 
+                 size = size - amBuffer->pkt->len - 2;
+                 if(amBuffer->pktstatus==1 &&FIfirst == -1)
+                  {
+                   
+                      FIfirst=0;E=(1<<10);
+                     
+                   }
+                 else if(amBuffer->pktstatus !=1 &&FIfirst == -1)
+                  {
+                   
+                       FIfirst=(1<<12);E=(1<<10);
+                     
+                   } 
+				 if(num == 0)
+				 	{
+                      FIsecond=0;
+					  lastCopyLen=amBuffer->pkt->len;
+					  break;
+				 	}
+               }
+           else                             //与刚好一个SDU情况相同
+               {
+                 
+				  fsm_printf("hello4");
+               if(amBuffer->pktstatus ==1)
+                  {
+                    if(FIfirst == -1)
+                    {
+                      FIfirst=0;E=0;FIsecond=0;
+                     }
+					else
+                    FIsecond=0;
+                   }
+               else
+                 {  
+                    if(FIfirst == -1) 
+                     {
+                      FIfirst=(1<<12);E=0;FIsecond=0;
+                     }
+					else
+                    FIsecond=0;
+                  }
+                   lastCopyLen = amBuffer->pkt->len ;
+                   break;
+                }
+      	}	
+    }
+    header = (D_C|RF|P|FIfirst|FIsecond|E|SN);
+    FSM_PKT *skb = fsm_pkt_create(sizeFromMac) ;
+    
+    struct list_head *pos = head->next;
+    struct AmSduBuffer *tbuff = list_entry(pos,struct AmSduBuffer,list);
+    
+    if(count == 1)
+      {
+          fsm_skb_reserve(skb,sizeFromMac);
+          fsm_mem_cpy(fsm_skb_push(skb,lastCopyLen),tbuff->pkt->data,lastCopyLen);
+          fsm_mem_cpy(fsm_skb_push(skb,2),head,2);
+          fsm_skb_pull(tbuff->pkt,lastCopyLen);
+          if(lastCopyLen == tbuff->pkt->len)
+           {
+            list_del(&tbuff->list);
+	        fsm_pkt_destroy(tbuff->pkt);
+            /*fsm_mem_free(tbuff);*/	
+	       }
+       }
+    else if(count > 1)
+       {
+          fsm_skb_reserve(skb,2*count);
+          u16 LI[count-1],headExt[count-1];
+          int i = 0;
+          unsigned char *des = skb->data;
+          list_for_each_entry_safe(amBuffer,tempBuffer,head,list)
+           {
+               if(i<count-1)
+                 {
+                    LI[i] = amBuffer->pkt->len;
+                    headExt[i] = ((1<<15)|LI[i]);
+					unsigned char *tail = fsm_skb_put(skb,amBuffer->pkt->len);
+                    fsm_mem_cpy(des,amBuffer->pkt->data,amBuffer->pkt->len);
+					des = des + amBuffer->pkt->len ;
+                    list_del(&amBuffer->list);
+	                fsm_pkt_destroy(amBuffer->pkt);
+                    /*fsm_mem_free(amBuffer);*/	
+                    i++;
+					continue;
+                  }
+               else if(i==count-1)
+                  {
+					unsigned char *tail = fsm_skb_put(skb,lastCopyLen);
+                    fsm_mem_cpy(des,amBuffer->pkt->data,lastCopyLen);
+                    fsm_skb_pull(amBuffer->pkt,lastCopyLen);
+                    if(amBuffer->pkt->len == lastCopyLen)
+                      {
+                        list_del(&amBuffer->list);
+	                    fsm_pkt_destroy(amBuffer->pkt);
+                        /*fsm_mem_free(amBuffer);	*/
+	                  }
+					else
+						amBuffer->pktstatus=4;
+                    break;
+                   }
+               else
+			   	continue;
+            }
+               headExt[count-2]=(headExt[count-2]&0x7fff);
+               fsm_mem_cpy(fsm_skb_push(skb,2*(count-1)),headExt,2*(count-1));
+               fsm_mem_cpy(fsm_skb_push(skb,2),head,2);
+        }
+	
+     fsm_printf("%d\n",count);
+	 fsm_printf("%s\n",skb->data + (2*count));
+     amIns->SN++;
+     return skb;                       
+}
+
+//UM模式
+
+FSM_PKT * UM_segment(struct UM_TX_Instance *umIns,u32 sizeFromMac)
+{
+   u32 size = sizeFromMac - 2;
+   int num = umIns->umSduBufferNum;
+   struct list_head *head =&(umIns->umSduBuffer.list);
+   
+   struct UmBuffer *amBuffer,*tempBuffer;
+   int count = 0;
+   unsigned int lastCopyLen;
+   u16 header;
+   u16 FIsecond;
+   u16 E;
+   u16 SN = umIns->SN;
+   u16 R=0;
+   u16 FIfirst = -1;
+    
+   	
+   if(!list_empty(head))
+     {
+	  list_for_each_entry(amBuffer,head,list)
+	  	{
+	         count++;
+			 num--;
+            if(size < amBuffer->pkt->len)//一个ＳＤＵ都装不下
+              {
+               
+                if(amBuffer->pktstatus ==1)
+                  {
+                    if(FIfirst == -1)
+                    {
+                      FIfirst=0;E=0;FIsecond=(1<<11);
+                     }
+					else
+                    FIsecond=(1<<11);
+                   }
+                else
+                  {
+                    if(FIfirst == -1)
+                     {
+                      FIfirst=(1<<12);E=0;FIsecond=(1<<11);
+                     }
+					else
+                    FIsecond=(1<<11);
+                   }
+				lastCopyLen = size;
+                break;
+               }
+            else if(size == amBuffer->pkt->len) //刚好一个SDU
+              {
+               
+               if(amBuffer->pktstatus ==1)
+                  {
+                    if(FIfirst == -1)
+                    {
+                      FIfirst=0;E=0; FIsecond=0;
+                     }
+					else
+                    FIsecond=0;
+                   }
+               else
+                 {  
+                    if(FIfirst == -1) 
+                     {
+                      FIfirst=(1<<12);E=0; FIsecond=0;
+                     }
+					else
+                    FIsecond=0;
+                  }
+               lastCopyLen = size;
+               break;
+              }
+           else if(size > (amBuffer->pkt->len + 2))//多个SDU
+              {
+                 
+                 size = size - amBuffer->pkt->len - 2;
+                 if(amBuffer->pktstatus==1 &&FIfirst == -1)
+                  {
+                   
+                      FIfirst=0;E=(1<<10);
+                     
+                   }
+                 else if(amBuffer->pktstatus !=1 &&FIfirst == -1)
+                  {
+                   
+                       FIfirst=(1<<12);E=(1<<10);
+                     
+                   } 
+				 if(num == 0)
+				 	{
+                      FIsecond=0;
+					  lastCopyLen=amBuffer->pkt->len;
+					  break;
+				 	}
+               }
+           else                             //与刚好一个SDU情况相同
+               {
+                 
+				  fsm_printf("hello4");
+               if(amBuffer->pktstatus ==1)
+                  {
+                    if(FIfirst == -1)
+                    {
+                      FIfirst=0;E=0;FIsecond=0;
+                     }
+					else
+                    FIsecond=0;
+                   }
+               else
+                 {  
+                    if(FIfirst == -1) 
+                     {
+                      FIfirst=(1<<12);E=0;FIsecond=0;
+                     }
+					else
+                    FIsecond=0;
+                  }
+                   lastCopyLen = amBuffer->pkt->len ;
+                   break;
+                }
+      	}	
+    }
+    header = (R|FIfirst|FIsecond|E|SN);
+    FSM_PKT *skb = fsm_pkt_create(sizeFromMac) ;
+    
+    struct list_head *pos = head->next;
+    struct UmBuffer *tbuff = list_entry(pos,struct UmBuffer,list);
+    
+    if(count == 1)
+      {
+          fsm_skb_reserve(skb,sizeFromMac);
+          fsm_mem_cpy(fsm_skb_push(skb,lastCopyLen),tbuff->pkt->data,lastCopyLen);
+          fsm_mem_cpy(fsm_skb_push(skb,2),head,2);
+          fsm_skb_pull(tbuff->pkt,lastCopyLen);
+          if(lastCopyLen == tbuff->pkt->len)
+           {
+            list_del(&tbuff->list);
+	        fsm_pkt_destroy(tbuff->pkt);
+            /*fsm_mem_free(tbuff);*/	
+	       }
+       }
+    else if(count > 1)
+       {
+          fsm_skb_reserve(skb,2*count);
+          u16 LI[count-1],headExt[count-1];
+          int i = 0;
+          unsigned char *des = skb->data;
+          list_for_each_entry_safe(amBuffer,tempBuffer,head,list)
+           {
+               if(i<count-1)
+                 {
+                    LI[i] = amBuffer->pkt->len;
+                    headExt[i] = ((1<<15)|LI[i]);
+					unsigned char *tail = fsm_skb_put(skb,amBuffer->pkt->len);
+                    fsm_mem_cpy(des,amBuffer->pkt->data,amBuffer->pkt->len);
+					des = des + amBuffer->pkt->len ;
+                    list_del(&amBuffer->list);
+	                fsm_pkt_destroy(amBuffer->pkt);
+                    /*fsm_mem_free(amBuffer);*/	
+                    i++;
+					continue;
+                  }
+               else if(i==count-1)
+                  {
+					unsigned char *tail = fsm_skb_put(skb,lastCopyLen);
+                    fsm_mem_cpy(des,amBuffer->pkt->data,lastCopyLen);
+                    fsm_skb_pull(amBuffer->pkt,lastCopyLen);
+                    if(amBuffer->pkt->len == lastCopyLen)
+                      {
+                        list_del(&amBuffer->list);
+	                    fsm_pkt_destroy(amBuffer->pkt);
+                        /*fsm_mem_free(amBuffer);	*/
+	                  }
+					else
+						amBuffer->pktstatus=4;
+                    break;
+                   }
+               else
+			   	continue;
+            }
+               headExt[count-2]=(headExt[count-2]&0x7fff);
+               fsm_mem_cpy(fsm_skb_push(skb,2*(count-1)),headExt,2*(count-1));
+               fsm_mem_cpy(fsm_skb_push(skb,2),head,2);
+        }
+	
+     fsm_printf("%d\n",count);
+	 fsm_printf("%s\n",skb->data + (2*count));
+     umIns->SN++;
+     return skb;                       
+}
+
+//两种情况下调用再分段函数，1当需要重传一个完整PDU，但判断需要再分段,2当需要重传一个分段。
+
+FSM_PKT* Re_segment(struct AmBuffer *tbuff, u32 sizeFromMac)
+{
+  if(tbuff->segStart[0] != -1)
+    {
+      int start = tbuff->segStart[0];
+      int end = tbuff->segEnd[0];
+      int headLen = tbuff->headLen + 2;
+      int dataLen = end - start + 1;
+      int retxSize = headLen + dataLen;
+      u16 LSF,SO;
+	  u16 a_head=0,b_head=0;
+	  
+	  int count = tbuff->segnum;
+      FSM_PKT *skb;
+    if(retxSize <= sizeFromMac)//不需要再分段
+      {
+         SO = start;
+         if(tbuff->pkt->data + headLen  + end == tbuff->pkt->tail - 1)
+          LSF = (1<<15);
+         else
+          LSF = 0;
+         a_head = (LSF|SO);
+         fsm_mem_cpy(&b_head,tbuff->pkt->data,2);
+         b_head = (b_head|0x4000);
+         skb = fsm_pkt_create(retxSize);
+         fsm_skb_reserve(skb,headLen);
+         unsigned char *tail = fsm_skb_put(skb,dataLen);
+         fsm_mem_cpy(skb->data,(tbuff->pkt->data + tbuff->headLen  + start),dataLen); //start等于0就是从PDU数据域开始
+         fsm_mem_cpy(fsm_skb_push(skb,headLen - 4),tbuff->pkt->data + 2,headLen - 4);
+         fsm_mem_cpy(fsm_skb_push(skb,2),&a_head,2);
+         fsm_mem_cpy(fsm_skb_push(skb,2),&b_head,2);
+
+		 if(count == 1)
+		 	{
+              tbuff->segStart[0]=-1;
+			  tbuff->segEnd[0]=-1;
+		 	}
+		 else if(count > 1)
+		 	{
+             int i;
+             for(i=0;i < count-1;i++)  
+                {
+                  tbuff->segStart[i] = tbuff->segStart[i+1];
+                  tbuff->segEnd[i] = tbuff->segEnd[i+1];
+                }
+             tbuff->segStart[count-1] = -1;
+             tbuff->segEnd[count-1] = -1;
+			 count--;
+            }
+      }
+   else                    //需要再分段
+     {
+         SO = start;
+         LSF = 0;
+         a_head = (SO|LSF);
+         fsm_mem_cpy(&b_head,tbuff->pkt->data,2);
+         b_head = (b_head|0x4000);
+         skb = fsm_pkt_create(sizeFromMac);
+         fsm_skb_reserve(skb,headLen);
+         int len = sizeFromMac - headLen;
+         unsigned char *tail = fsm_skb_put(skb,len);
+         fsm_mem_cpy(skb->data,tbuff->pkt->data + tbuff->headLen  + start,len); //start等于0就是从PDU数据域开始
+         fsm_mem_cpy(fsm_skb_push(skb,headLen - 4),tbuff->pkt->data + 2,headLen - 4);
+         fsm_mem_cpy(fsm_skb_push(skb,2),&a_head,2);
+         fsm_mem_cpy(fsm_skb_push(skb,2),&b_head,2);
+         tbuff->segStart[0] += len;
+      }
+   fsm_printf("%s\n",skb->data + headLen);
+   fsm_printf("%d\n",tbuff->segStart[0]);
+   return skb;
+  }
+  else
+   fsm_printf("segment transfer has been completed");
+}
+
+
+
+//获得固定头函数
+void get_amPduhead(struct AmBuffer *tbuff,struct _ampduhdr *pPduhdr)
+{
+   
+    u16 b=0;
+
+    fsm_mem_cpy(&b,tbuff->pkt->data,2);
+	fsm_printf("%x\n",b);
+    pPduhdr->FIfirst = (b&0x1000)>>12;
+	
+    pPduhdr->FIsecond = (b&0x0800)>>11;
+	
+    pPduhdr->E = (b&0x0400)>>10;
+    pPduhdr->SN = b&0x03ff;
+    fsm_skb_pull(tbuff->pkt, 2) ;
+    
+}
+
+//获得扩展头长度、给扩展头指针数组赋值函数
+u16 get_amPduhdrExt(u16 E,struct AmBuffer *tbuff,u16 count,struct _pduhdrExt *pPduhdrExt)
+{
+
+
+    if(E==1)
+    {
+
+        u16 b=0;
+
+        fsm_mem_cpy(&b,tbuff->pkt->data,2);
+        fsm_skb_pull(tbuff->pkt, 2) ;
+        //fsm_printf("%x\n",b);
+        pPduhdrExt->E[count] = (b&0x8000)>>15;
+        pPduhdrExt->LI[count] = (b&0x7fff);
+
+        count++;
+        getPduhdrExt(pPduhdrExt->E[count-1],tbuff->pkt,count,pPduhdrExt);
+
+    }
+    else
+        return count;
+    FOUT;
+
+}
+/*
+    pduLeft为全局变量，初始化为
+    pdu_left->SN_left = -1;
+    pdu_left->sduLeft = NULLl;
+ */
+
+
+void AM_reassemble(struct AM_Instance *amIns, struct pduLeft *pdu_left)
+{
+   
+   FSM_PKT *skb;
+   struct _ampduhdr *pduhdr,Pduhdr;
+   pduhdr = &Pduhdr;
+   int i;
+   for(i=0;i<amIns->vr_r;i++)
+    {
+    if(amIns->amRecvWindow[i] != NULL)
+       {
+      
+        struct AmBuffer *tbuff = amIns->amRecvWindow[i];
+        get_amPduhead(amIns->amRecvWindow[i],pduhdr) ;//调用固定头函数
+        //fsm_printf("%d\n",pduhdr->E);
+		//fsm_printf("%d\n",pduhdr->FIfirst);
+        if((pduhdr->E==0)&&(pduhdr->FIfirst==1))
+          {
+             if( (pdu_left->SN_Left+1)==pduhdr->SN)
+               {
+                  FSM_PKT *new_skb;
+                  u16 length = pdu_left->sduLeft->len + tbuff->pkt->len;
+                  new_skb = fsm_pkt_create(length);
+
+                  fsm_skb_reserve(new_skb,length);
+                  fsm_mem_cpy(fsm_skb_push(new_skb,tbuff->pkt->len),tbuff->pkt->data,tbuff->pkt->len);
+                  fsm_mem_cpy(fsm_skb_push(new_skb,pdu_left->sduLeft->len),pdu_left->sduLeft->data,pdu_left->sduLeft->len);
+                  if(pduhdr->FIsecond==0)
+                    {
+                      skb = new_skb;
+					  //这里调用发送函数
+                      list_del(&tbuff->list);
+                      fsm_pkt_destroy(tbuff->pkt);
+                      //fsm_mem_free(tbuff);				
+                      pdu_left->SN_Left = -1;
+                      fsm_pkt_destroy(pdu_left->sduLeft);
+                      pdu_left->sduLeft = NULL;
+                     }
+                  else
+                    {
+                      list_del(&tbuff->list);
+                      fsm_pkt_destroy(tbuff->pkt);
+                      //fsm_mem_free(tbuff);
+                      fsm_pkt_destroy(pdu_left->sduLeft);
+                      pdu_left->SN_Left = pduhdr->SN;
+                      pdu_left->sduLeft = new_skb;
+                     }
+                }
+             else
+               {
+                  if(pdu_left->SN_Left != -1)
+                     {
+                        pdu_left->SN_Left = -1;
+                        fsm_pkt_destroy(pdu_left->sduLeft);
+                        pdu_left->sduLeft=NULL;
+                      }
+                  list_del(&tbuff->list);
+                  fsm_pkt_destroy(tbuff->pkt);
+                  //fsm_mem_free(tbuff);
+                }
+          } 
+       else if((pduhdr->E==0)&&(pduhdr->FIfirst==0))
+         {
+            
+            if(pdu_left->SN_Left != -1)
+              {
+                 pdu_left->SN_Left = -1;
+                 fsm_pkt_destroy(pdu_left->sduLeft);
+                 pdu_left->sduLeft=NULL;
+               }
+
+            if(pduhdr->FIsecond==0)
+            	{
+               
+                skb = tbuff->pkt;
+				//这里调用发送函数
+            	}
+                
+            else
+              {
+                pdu_left->SN_Left = pduhdr->SN;
+                pdu_left->sduLeft=tbuff->pkt;
+               }
+          }
+       else if(pduhdr->E==1)
+         {
+           struct _pduhdrExt PduhdrExt,*pPduhdrExt;
+           pPduhdrExt = &PduhdrExt;
+           u16 count = get_amPduhdrExt(1,tbuff,0,pPduhdrExt);  //调用扩展头函数
+           fsm_printf("%d\n",count);
+		   fsm_printf("%d\n",pPduhdrExt->E[0]);
+          //第一个与前面的left比一下看是否能重组。
+          
+
+        if(pduhdr->FIfirst==1)
+         {
+            if((pdu_left->SN_Left+1)==pduhdr->SN)
+            {
+                FSM_PKT *new_skb;
+                u16 length = pdu_left->sduLeft->len + pPduhdrExt->LI[0];
+                new_skb = fsm_pkt_create(length);
+
+                fsm_skb_reserve(new_skb,length);
+                fsm_mem_cpy(fsm_skb_push(new_skb,pPduhdrExt->LI[0]),tbuff->pkt->data,pPduhdrExt->LI[0]);
+                fsm_skb_pull(tbuff->pkt,pPduhdrExt->LI[0] ) ;
+                fsm_mem_cpy(fsm_skb_push(new_skb,pdu_left->sduLeft->len),pdu_left->sduLeft->data,pdu_left->sduLeft->len);
+                
+				skb = new_skb;
+				//这里调用发送函数
+                pdu_left->SN_Left = -1;
+                fsm_pkt_destroy(pdu_left->sduLeft);
+                pdu_left->sduLeft = NULL;
+             }
+            else
+            {
+                if(pdu_left->SN_Left != -1)
+                 {
+                    pdu_left->SN_Left = -1;
+                    fsm_pkt_destroy(pdu_left->sduLeft);
+                    pdu_left->sduLeft=NULL;
+                  }
+                fsm_skb_pull(tbuff->pkt,pPduhdrExt->LI[0] ) ;
+
+             }
+          }
+        else
+         {
+            if(pdu_left->SN_Left != -1)
+              {
+                 pdu_left->SN_Left = -1;
+                 fsm_pkt_destroy(pdu_left->sduLeft);
+                 pdu_left->sduLeft=NULL;
+               }
+           
+            u16 length =pPduhdrExt->LI[0];
+            FSM_PKT *new_skb =fsm_pkt_create(length);
+
+            fsm_skb_reserve(new_skb,length);
+            fsm_mem_cpy(fsm_skb_push(new_skb,length),tbuff->pkt->data,length);
+            fsm_skb_pull(tbuff->pkt,length ) ;
+
+
+           skb = new_skb;
+		   //这里调用发送函数
+
+         }
+        //中间的直接重组成SDU
+        int j;
+        for(j=0; j++; j<count)
+        {
+            u16 length = pPduhdrExt->LI[j];
+            FSM_PKT *new_skb = fsm_pkt_create(length);
+
+            fsm_skb_reserve(new_skb,length);
+            fsm_mem_cpy(fsm_skb_push(new_skb,length),tbuff->pkt->data,length);
+            fsm_skb_pull(tbuff->pkt,length ) ;
+            skb = new_skb;
+			//这里调用发送函数
+
+        }
+        //最后一个判断FIsecond，若为0直接重组，若为1，加入SDU_Left中，更新LEft，继续调用重组函数
+        if(pduhdr->FIsecond==0)
+        {
+            u16 length = tbuff->pkt->len;
+            FSM_PKT *new_skb = fsm_pkt_create(length);
+            fsm_skb_reserve(new_skb,length);
+            fsm_mem_cpy(fsm_skb_push(new_skb,length),tbuff->pkt->data,length);
+            fsm_skb_pull(tbuff->pkt,length) ;
+            skb = new_skb ;
+            //这里调用发送函数
+           
+            list_del(&tbuff->list);
+            fsm_pkt_destroy(tbuff->pkt);
+            //fsm_mem_free(tbuff);
+           
+        }
+        else
+        {
+            u16 length = tbuff->pkt->len;
+            FSM_PKT *new_skb = fsm_pkt_create(length);
+            fsm_skb_reserve(new_skb,length);
+            fsm_mem_cpy(fsm_skb_push(new_skb,length),tbuff->pkt->data,length);
+            fsm_skb_pull(tbuff->pkt,tbuff->pkt->len) ;
+
+            pdu_left->SN_Left = pduhdr->SN;
+            pdu_left->sduLeft = new_skb;
+            list_del(&tbuff->list);
+            fsm_pkt_destroy(tbuff->pkt);
+            //fsm_mem_free(tbuff);         
+        }
+     }
+         amIns->amRecvWindow[i]=NULL;
+       }//end if
+    }//end for
+    fsm_printf("%s\n",skb->data);
+ 
+}
+
+
+//UM模式
+
+get_umPduhead(struct UmBuffer *tbuff,struct _pduhdr *pPduhdr)
+{
+    u16 b;
+
+    fsm_mem_cpy(&b,tbuff->pkt->data,2);
+    pPduhdr->FIfirst = (b&0x1000)>>12;
+    pPduhdr->FIsecond = (b&0x0800)>>11;
+    pPduhdr->E = (b&0x0400)>>10;
+    pPduhdr->SN = (b&0x03ff);
+    fsm_skb_pull(tbuff->pkt, 2) ;
+    return pPduhdr;
+    FOUT;
+}
+
+//获得扩展头长度、给扩展头指针数组赋值函数
+u16 get_umPduhdrExt(u16 E,struct UmBuffer *tbuff,u16 count,struct _pduhdrExt *pPduhdrExt)
+{
+
+
+    if(E==1)
+    {
+
+        u16 b=0;
+
+        fsm_mem_cpy(&b,tbuff->pkt->data,2);
+        fsm_skb_pull(tbuff->pkt, 2) ;
+        //fsm_printf("%x\n",b);
+        pPduhdrExt->E[count] = (b&0x8000)>>15;
+        pPduhdrExt->LI[count] = (b&0x7fff);
+
+        count++;
+        getPduhdrExt(pPduhdrExt->E[count-1],tbuff->pkt,count,pPduhdrExt);
+
+    }
+    else
+        return count;
+    FOUT;
+
+}
+
+
+void UM_reassemble(struct UM_RX_Instance *umIns, struct pduLeft *pdu_left)
+{
+   
+   FSM_PKT *skb;
+   struct _pduhdr *pduhdr,Pduhdr;
+   pduhdr = &Pduhdr;
+   int i;
+   for(i=0;i<umIns->vr_ur;i++)
+    {
+    if(umIns->umRecvWindow10[i] != NULL)
+       {
+      
+        struct UmBuffer *tbuff = umIns->umRecvWindow10[i];
+        get_umPduhead(umIns->umRecvWindow10[i],pduhdr) ;//调用固定头函数
+        //fsm_printf("%d\n",pduhdr->E);
+		//fsm_printf("%d\n",pduhdr->FIfirst);
+        if((pduhdr->E==0)&&(pduhdr->FIfirst==1))
+          {
+             if( (pdu_left->SN_Left+1)==pduhdr->SN)
+               {
+                  FSM_PKT *new_skb;
+                  u16 length = pdu_left->sduLeft->len + tbuff->pkt->len;
+                  new_skb = fsm_pkt_create(length);
+
+                  fsm_skb_reserve(new_skb,length);
+                  fsm_mem_cpy(fsm_skb_push(new_skb,tbuff->pkt->len),tbuff->pkt->data,tbuff->pkt->len);
+                  fsm_mem_cpy(fsm_skb_push(new_skb,pdu_left->sduLeft->len),pdu_left->sduLeft->data,pdu_left->sduLeft->len);
+                  if(pduhdr->FIsecond==0)
+                    {
+                      skb = new_skb;
+					  //这里调用发送函数
+                      list_del(&tbuff->list);
+                      fsm_pkt_destroy(tbuff->pkt);
+                      //fsm_mem_free(tbuff);				
+                      pdu_left->SN_Left = -1;
+                      fsm_pkt_destroy(pdu_left->sduLeft);
+                      pdu_left->sduLeft = NULL;
+                     }
+                  else
+                    {
+                      list_del(&tbuff->list);
+                      fsm_pkt_destroy(tbuff->pkt);
+                      //fsm_mem_free(tbuff);
+                      fsm_pkt_destroy(pdu_left->sduLeft);
+                      pdu_left->SN_Left = pduhdr->SN;
+                      pdu_left->sduLeft = new_skb;
+                     }
+                }
+             else
+               {
+                  if(pdu_left->SN_Left != -1)
+                     {
+                        pdu_left->SN_Left = -1;
+                        fsm_pkt_destroy(pdu_left->sduLeft);
+                        pdu_left->sduLeft=NULL;
+                      }
+                  list_del(&tbuff->list);
+                  fsm_pkt_destroy(tbuff->pkt);
+                  //fsm_mem_free(tbuff);
+                }
+          } 
+       else if((pduhdr->E==0)&&(pduhdr->FIfirst==0))
+         {
+            
+            if(pdu_left->SN_Left != -1)
+              {
+                 pdu_left->SN_Left = -1;
+                 fsm_pkt_destroy(pdu_left->sduLeft);
+                 pdu_left->sduLeft=NULL;
+               }
+
+            if(pduhdr->FIsecond==0)
+            	{
+               
+                skb = tbuff->pkt;
+				//这里调用发送函数
+            	}
+                
+            else
+              {
+                pdu_left->SN_Left = pduhdr->SN;
+                pdu_left->sduLeft=tbuff->pkt;
+               }
+          }
+       else if(pduhdr->E==1)
+         {
+           struct _pduhdrExt PduhdrExt,*pPduhdrExt;
+           pPduhdrExt = &PduhdrExt;
+           u16 count = get_umPduhdrExt(1,tbuff,0,pPduhdrExt);  //调用扩展头函数
+           fsm_printf("%d\n",count);
+		   fsm_printf("%d\n",pPduhdrExt->E[0]);
+          //第一个与前面的left比一下看是否能重组。
+          
+
+        if(pduhdr->FIfirst==1)
+         {
+            if((pdu_left->SN_Left+1)==pduhdr->SN)
+            {
+                FSM_PKT *new_skb;
+                u16 length = pdu_left->sduLeft->len + pPduhdrExt->LI[0];
+                new_skb = fsm_pkt_create(length);
+
+                fsm_skb_reserve(new_skb,length);
+                fsm_mem_cpy(fsm_skb_push(new_skb,pPduhdrExt->LI[0]),tbuff->pkt->data,pPduhdrExt->LI[0]);
+                fsm_skb_pull(tbuff->pkt,pPduhdrExt->LI[0] ) ;
+                fsm_mem_cpy(fsm_skb_push(new_skb,pdu_left->sduLeft->len),pdu_left->sduLeft->data,pdu_left->sduLeft->len);
+                
+				skb = new_skb;
+				//这里调用发送函数
+                pdu_left->SN_Left = -1;
+                fsm_pkt_destroy(pdu_left->sduLeft);
+                pdu_left->sduLeft = NULL;
+             }
+            else
+            {
+                if(pdu_left->SN_Left != -1)
+                 {
+                    pdu_left->SN_Left = -1;
+                    fsm_pkt_destroy(pdu_left->sduLeft);
+                    pdu_left->sduLeft=NULL;
+                  }
+                fsm_skb_pull(tbuff->pkt,pPduhdrExt->LI[0] ) ;
+
+             }
+          }
+        else
+         {
+            if(pdu_left->SN_Left != -1)
+              {
+                 pdu_left->SN_Left = -1;
+                 fsm_pkt_destroy(pdu_left->sduLeft);
+                 pdu_left->sduLeft=NULL;
+               }
+           
+            u16 length =pPduhdrExt->LI[0];
+            FSM_PKT *new_skb =fsm_pkt_create(length);
+
+            fsm_skb_reserve(new_skb,length);
+            fsm_mem_cpy(fsm_skb_push(new_skb,length),tbuff->pkt->data,length);
+            fsm_skb_pull(tbuff->pkt,length ) ;
+
+
+           skb = new_skb;
+		   //这里调用发送函数
+
+         }
+        //中间的直接重组成SDU
+        int j;
+        for(j=0; j++; j<count)
+        {
+            u16 length = pPduhdrExt->LI[j];
+            FSM_PKT *new_skb = fsm_pkt_create(length);
+
+            fsm_skb_reserve(new_skb,length);
+            fsm_mem_cpy(fsm_skb_push(new_skb,length),tbuff->pkt->data,length);
+            fsm_skb_pull(tbuff->pkt,length ) ;
+            skb = new_skb;
+			//这里调用发送函数
+
+        }
+        //最后一个判断FIsecond，若为0直接重组，若为1，加入SDU_Left中，更新LEft，继续调用重组函数
+        if(pduhdr->FIsecond==0)
+        {
+            u16 length = tbuff->pkt->len;
+            FSM_PKT *new_skb = fsm_pkt_create(length);
+            fsm_skb_reserve(new_skb,length);
+            fsm_mem_cpy(fsm_skb_push(new_skb,length),tbuff->pkt->data,length);
+            fsm_skb_pull(tbuff->pkt,length) ;
+            skb = new_skb ;
+            //这里调用发送函数
+           
+            list_del(&tbuff->list);
+            fsm_pkt_destroy(tbuff->pkt);
+            //fsm_mem_free(tbuff);
+           
+        }
+        else
+        {
+            u16 length = tbuff->pkt->len;
+            FSM_PKT *new_skb = fsm_pkt_create(length);
+            fsm_skb_reserve(new_skb,length);
+            fsm_mem_cpy(fsm_skb_push(new_skb,length),tbuff->pkt->data,length);
+            fsm_skb_pull(tbuff->pkt,tbuff->pkt->len) ;
+
+            pdu_left->SN_Left = pduhdr->SN;
+            pdu_left->sduLeft = new_skb;
+            list_del(&tbuff->list);
+            fsm_pkt_destroy(tbuff->pkt);
+            //fsm_mem_free(tbuff);
+          
+        }
+
+
+     }
+
+
+         umIns->umRecvWindow10[i]=NULL;
+       }//end if
+    }//end for
+    fsm_printf("%s\n",skb->data);
+ 
+}
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

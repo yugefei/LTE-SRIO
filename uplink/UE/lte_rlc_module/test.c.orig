@@ -1,0 +1,33 @@
+#include "rlcfsm.h"
+#include "Rlctypes.h"
+
+void Am_instance_build()
+{
+	struct AM_Instance *amIns;
+	    SV_PTR_GET(rlc_sv);
+	 amIns =  instance_create(struct AM_Instance);
+        amIns->rbId = cIoctrl->rbIdentity;
+        amIns->lcId = cIoctrl->lcIdentity;
+        amIns->reorderTimerValue= cIoctrl->amDwparas.timerReordering;
+        amIns->statProhTimerValue = cIoctrl->amDwparas.timerStatusProhibit;
+        amIns->pollRetxTimerValue = cIoctrl->amUpParas.timerPollRetransmit;
+        amIns->pollPDU = cIoctrl->amUpParas.PollPDU;
+        amIns->pollBYTE = cIoctrl->amUpParas.PollBYTE;
+        amIns->maxRetxThreshold = cIoctrl->amUpParas.maxRetxThreshold;
+        amIns->pollRetxTimerCode =( int)amIns;                                 //根据试题地址设置定时器
+        amIns->reorderTimerCode = (int)amIns + 1;
+        amIns->statProhTimerCode = (int)amIns + 2;
+	amIns->vr_x = amIns->vr_h = amIns->vr_ms = amIns->vr_r = 0;
+	amIns->vr_mr = AM_WINDOW_SIZE;
+        INIT_LIST_HEAD(&amIns->amSduBuffer.list);
+        INIT_LIST_HEAD(&amIns->amRecvBuffer.list);
+        INIT_LIST_HEAD(&amIns->amRetxBuffer.list);
+        INIT_LIST_HEAD(&amIns->amTransmittedBuffer.list);
+        INIT_LIST_HEAD(&amIns->ctrlPduBuffer.list);
+	for(i = 0;  i < 1024; ++i )		
+		amIns->amRecvWindow[i] = NULL;
+	for(i = 0;  i < 1024; ++i )		
+		amIns->amTranWindow[i]= NULL;	
+        list_add_tail(&amIns->amList, &SV(vAm_ins).amList);
+
+}

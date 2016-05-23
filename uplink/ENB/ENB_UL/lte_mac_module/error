@@ -1,0 +1,64 @@
+make[2]: *** 警告：文件“/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/.queue_manager.o.cmd”的修改时间在将来24
+In file included from /mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/macfsm.h:7:0,
+                 from /mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c:7:
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_scheduler.h:334:1: 警告： 函数声明不是一个原型 [-Wstrict-prototypes]
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_scheduler.h:335:1: 警告： 函数声明不是一个原型 [-Wstrict-prototypes]
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_scheduler.h:340:1: 警告： 函数声明不是一个原型 [-Wstrict-prototypes]
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_scheduler.h:354:1: 警告： 函数声明不是一个原型 [-Wstrict-prototypes]
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c: 在函数‘complexRarPdu’中:
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c:15:3: 警告： ISO C90 不允许混合使用声明和代码 [-Wdeclaration-after-statement]
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c:33:3: 错误： ‘Do_Data_of_MacRarPdu_ulgrant’的第 2 个实参类型不兼容
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_scheduler.h:343:16: 附注： 需要类型‘struct S_RAinfo *’，但实参的类型为‘struct S_RAinfo’
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c:15:24: 警告： 未使用的变量‘head_len’ [-Wunused-variable]
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c:14:3: 警告： 未使用的变量‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c: 在函数‘hasContentionResolutionSend’中:
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c:81:3: 警告： ISO C90 不允许混合使用声明和代码 [-Wdeclaration-after-statement]
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c:84:36: 错误： ‘mac_sv’没有名为‘m_temp_cr’的成员
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c:80:3: 警告： 未使用的变量‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c: 在函数‘hasTimeAdvanceSend’中:
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c:89:3: 警告： 未使用的变量‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c: 在函数‘setMACtoPHY_IciMsg’中:
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c:99:3: 警告： ISO C90 不允许混合使用声明和代码 [-Wdeclaration-after-statement]
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c:98:3: 警告： 未使用的变量‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c: 在函数‘complexEnbMacPdu’中:
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c:109:3: 警告： ISO C90 不允许混合使用声明和代码 [-Wdeclaration-after-statement]
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c:114:12: 警告： 未使用的变量‘newskb’ [-Wunused-variable]
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c:112:25: 警告： 未使用的变量‘to_len’ [-Wunused-variable]
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c:112:14: 警告： 未使用的变量‘from_len’ [-Wunused-variable]
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c:112:7: 警告： 未使用的变量‘numb’ [-Wunused-variable]
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c:111:9: 警告： 未使用的变量‘part2’ [-Wunused-variable]
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c:110:7: 警告： 未使用的变量‘part1’ [-Wunused-variable]
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c:109:19: 警告： 未使用的变量‘f_domain’ [-Wunused-variable]
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c:109:12: 警告： 未使用的变量‘timing’ [-Wunused-variable]
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c:109:7: 警告： 未使用的变量‘lcid’ [-Wunused-variable]
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c:107:3: 警告： 未使用的变量‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c: 在函数‘setMACtoRLC_IciMsg’中:
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c:268:3: 警告： 未使用的变量‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c: 在函数‘dealCcchSdu’中:
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c:284:15: 错误： ‘mac_sv’没有名为‘m_temp_cr’的成员
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c:288:15: 错误： ‘mac_sv’没有名为‘m_temp_cr’的成员
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c: 在函数‘decomplexEndMacPdu’中:
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c:366:3: 警告： ISO C90 不允许混合使用声明和代码 [-Wdeclaration-after-statement]
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c:395:3: 警告： ISO C90 不允许混合使用声明和代码 [-Wdeclaration-after-statement]
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c:432:7: 错误： 隐式声明函数‘Do_judge_rnti’ [-Werror=implicit-function-declaration]
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c:441:17: 错误： ‘->’参数类型无效(有‘struct S_UEinfo’)
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c:442:7: 错误： 隐式声明函数‘CalBSRDatasize’ [-Werror=implicit-function-declaration]
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c:455:17: 错误： ‘->’参数类型无效(有‘struct S_UEinfo’)
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c:371:43: 警告： 未使用的变量‘sdu_len’ [-Wunused-variable]
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c:371:25: 警告： 未使用的变量‘to_len’ [-Wunused-variable]
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c:370:7: 警告： 未使用的变量‘temp’ [-Wunused-variable]
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c:366:23: 警告： 未使用的变量‘padding_flag’ [-Wunused-variable]
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c:364:4: 警告： 未使用的变量‘_fsm_fstack_static_info’ [-Wunused-variable]
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.c: 在文件作用域：
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_scheduler.h:175:21: 警告： ‘BufferSizeLevelBsrTable’定义后未使用 [-Wunused-variable]
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_scheduler.h:183:21: 警告： ‘McsforCqi’定义后未使用 [-Wunused-variable]
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_scheduler.h:185:21: 警告： ‘Ul_ModulationSchemeForMcs’定义后未使用 [-Wunused-variable]
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_scheduler.h:190:21: 警告： ‘Dl_ModulationSchemeForMcs’定义后未使用 [-Wunused-variable]
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_scheduler.h:198:21: 警告： ‘Dl_McsToItbsize’定义后未使用 [-Wunused-variable]
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_scheduler.h:202:21: 警告： ‘Ul_McsToItbsize’定义后未使用 [-Wunused-variable]
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_scheduler.h:207:21: 警告： ‘TBSizeTableofFormat1c’定义后未使用 [-Wunused-variable]
+/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_scheduler.h:212:21: 警告： ‘TransportBlockSizeTable’定义后未使用 [-Wunused-variable]
+cc1: some warnings being treated as errors
+make[2]: *** [/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module/mac_pkthandler.o] 错误 1
+make[1]: *** [_module_/mnt/hgfs/VMshare/ENBMAC0730/lte_mac_module] 错误 2
+make: *** [default] 错误 2
