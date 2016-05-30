@@ -36,11 +36,13 @@ int main(int argc, char *argv[])
 		else if(strcmp(argv[1], "-hello_world")==0)
 		{
             if(args == 3)
+            {
             	strcpy(ifr.ifr_ifrn.ifrn_name, argv[2]);
             	print_hello(&kifr);
             	ifr.ifr_ifru.ifru_data = (void*)&kifr;
             	ioctl(sock, USERIOCCMD, &ifr);
-
+            }
+            	
 		}
 		else if(strcmp(argv[1], "-r") == 0)
 		{	
