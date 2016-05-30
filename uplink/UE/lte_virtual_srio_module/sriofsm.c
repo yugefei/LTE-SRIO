@@ -82,6 +82,12 @@
 #define IOCCMD_PRINT_PKT_FROM_MAC           0x68
 #define IOCCMD_STOP_TIMER          0x888
 #define IOCCMD_SEND_INFO           0x889
+#define IOCCMD_HELLO_WORLD         0X900 //ygf test ioctl
+int last_sysframe = 0 ;
+int last_subframe = 0 ;
+int flag = 0 ;
+int skipped = 0 ;
+
 
 
 extern LinkQueue UnionQueue[QUEUE_MAX_NUM];
@@ -129,7 +135,8 @@ extern unsigned int GetsubFrameNo(void);
 
 extern void rio_hrtimer1_stop_wrapper(void);
 extern void send_dsp_route_info_wrapper(void);
-extern void send_dbell(u16 sub);
+extern void send_dbell(u16 sub);
+
 /********************************************************************************
 ** Function name: srio_main
 ** Description: ÎïÀíÊÊÅä²ãµÄ×´Ì¬»úÖ÷º¯Êý
@@ -812,7 +819,13 @@ static void type1_pkt_assemble_test(void)
 	{
 		subframenum=7;
 	}
-
+	if(flag != 0)
+	{
+		skipped  = (((sysframenum - last_sysframe + 1022 ) % 1023 ) *2 + (subframenum - last_subframe )/5 +1 )
+	}
+	flag = 1 ;
+	last_sysframe = sysframenum ;
+	last_subframe = subframenum ;
 	//count_subframe++;
 	//printk("[srio]:sysframenum %d,subframe num %d\n",sysframenum,subframenum);
 	//subframenum=2;
@@ -1205,6 +1218,12 @@ static void idle_ioctl_handler(void)
 	{
 		switch(fsm_ev_ioctrl_cmd())
 		{
+			case IOCCMD_HELLO_WORLD:
+				printk("skipped ! %d \n",skipped);
+				last_sysframe = 0 ;
+				last_subframe = 0 ;
+				flag = 0 ;
+				skipped = 0 ;
 			case IOCCMD_PSEND_RUN:
 				if(SV(psend_handle) == 0)
 				{
