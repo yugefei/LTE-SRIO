@@ -14,7 +14,7 @@
 #define PRINT_COUNT_STATISTICS 0x68
 #define STOP_TIMER 0x888
 #define SEND_INFO 0x889
-#define HELLO_WORLD 0x900//hello world test
+#define HELLO_WORLD 0x900
 
 typedef uint32_t 	u32;
 
@@ -38,5 +38,5 @@ void minus_interval(struct kifreq* ifr_ptr);
 void pkt_from_mac(struct kifreq* ifr_ptr);
 void usage(void);
 void stop_timer(struct kifreq* ifr_ptr);
-void send_info(struct kifreq* ifr_ptr);		
-void print_hello(struct kifreq* ifr_ptr);//hello world test
+void send_info(struct kifreq* ifr_ptr);
+void print_hello(struct kifreq* ifr_ptr);

@@ -20,8 +20,6 @@
 #include "rrc_type_IEs.h"
 #include <linux/string.h>
 #include "queue.h"
-
-//	¶¨Òå×´Ì¬»úÖÐµÄ×´Ì¬
 /**********20141013 mf modified ************************/
 #define ST_INIT	0
 #define ST_CFG		1
@@ -31,16 +29,10 @@
 #define ST_SEND_TYPE1_TO_SRIO		5
 #define ST_RECV_TYPE2_FROM_SRIO	6
 #define ST_PRINT_INFO 7
-//#define ST_TEST	4	//²âÊÔ½×¶ÎÌí¼ÓTEST×´Ì¬£¬ÓÃÓÚ½ÓÊÕMSG3·¢ËÍMSG4	modified by MF 20140715
-/**********end modified ************************/
-
-
-//	¶¨ÒåÎïÀíÊÊÅä²ã±¾Éí²âÊÔÓÃIOControlÃüÁî
 #define IOCCMD_PSEND_RUN			0x01
 #define IOCCMD_PSEND_STOP			0x02
 #define IOCCMD_PSEND_INTERVAL	0x03 
 #define IOCCMD_SAY_HELLO			0x04
-
 //	¶¨ÒåUE²àMAC²ã¶ÔÎïÀíÊÊÅä²ãµÄIOControlÃüÁî
 #define IOCCMD_MACtoPHY_RNTI_Indicate			0x24      //·¢ËÍMSG3Ö®Ç° MAC²ã¸æÖªÊÊÅä²ãRNTIÖµ
 #define IOCCMD_MACtoPHY_Preamble_Indicate		0x25      //MSG1
@@ -82,7 +74,11 @@
 #define IOCCMD_PRINT_PKT_FROM_MAC           0x68
 #define IOCCMD_STOP_TIMER          0x888
 #define IOCCMD_SEND_INFO           0x889
-
+#define IOCCMD_HELLO_WORLD 		0x900
+int skipped = 0 ;
+int last_sysframe = 0 ;
+int last_subframe = 0 ;
+int first_flag = 0 ;
 
 extern LinkQueue UnionQueue[QUEUE_MAX_NUM];
 extern unsigned long long AddrStart[QUEUE_MAX_NUM];
@@ -166,14 +162,14 @@ void srio_main(void)
 			FSM_COND_TEST_OUT("IDLE")	
 			FSM_TRANSIT_SWITCH			
 			{	
-				FSM_CASE_TRANSIT(0, ST_RECV, , "IDLE -> RECV")	//Å“Ã“ÃŠÃœÃÃ‚Â²Ã£ÃÃ…ÃÂ¢			
-				FSM_CASE_TRANSIT(1, ST_SEND, , "IDLE -> SEND") //Â·Â¢Ã‹ÃÃ‰ÃÂ²Ã£ÃÃ…ÃÂ¢
-				FSM_CASE_TRANSIT(2, ST_INIT,idle_exit() , "IDLE -> INIT") //Ã—Å½ÃŒÂ¬Â»ÃºÃÃ‹Â³Ã¶
-				FSM_CASE_TRANSIT(3, ST_IDLE,send_packet_period(), "IDLE->IDLE")//Â¶Å¡ÃŠÂ±Ã†Ã·Ã–ÃœÃ†ÃšÂ·Â¢Ã‹Ã
+				FSM_CASE_TRANSIT(0, ST_RECV, , "IDLE -> RECV")			
+				FSM_CASE_TRANSIT(1, ST_SEND, , "IDLE -> SEND") 
+				FSM_CASE_TRANSIT(2, ST_INIT,idle_exit() , "IDLE -> INIT") 
+				FSM_CASE_TRANSIT(3, ST_IDLE,send_packet_period(), "IDLE->IDLE")
 				FSM_CASE_TRANSIT(4, ST_SEND_TYPE1_TO_SRIO, , "IDLE -> SEND_TYPE1_TO_SRIO")
 				FSM_CASE_TRANSIT(5, ST_RECV_TYPE2_FROM_SRIO, , "IDLE -> RECV_TYPE2_FROM_SRIO")
 				FSM_CASE_TRANSIT(6, ST_IDLE,print_info(),"IDLE -> IDLE")
-				FSM_CASE_DEFAULT(ST_IDLE,idle_ioctl_handler(), "IDLE->IDLE")	//iocontrol
+				FSM_CASE_DEFAULT(ST_IDLE,idle_ioctl_handler(), "IDLE->IDLE")
 			}	
 		}
 		FSM_STATE_FORCED(ST_RECV, "RECV", packet_send_to_upperlayer(), )
@@ -181,18 +177,15 @@ void srio_main(void)
 			FSM_TRANSIT_FORCE(ST_IDLE, , "default", "", "RECV -> IDLE");
 		}
 		FSM_STATE_FORCED(ST_SEND, "SEND", packet_send_to_eth(), )   //20141018 for test
-		//FSM_STATE_FORCED(ST_SEND, "SEND", print_tran_info("STATE:SEND"), )
 		{
 			FSM_TRANSIT_FORCE(ST_IDLE, , "default", "", "SEND -> IDLE");
 		}
 		FSM_STATE_FORCED(ST_SEND_TYPE1_TO_SRIO, "SEND_TYPE1_TO_SRIO", type1_send_to_srio(), )   //20141029 for test
-		//FSM_STATE_FORCED(ST_SEND, "SEND", print_tran_info("[MF]STATE:SEND\n"), )
 		{
 			FSM_TRANSIT_FORCE(ST_IDLE, , "default", "", "SEND_TYPE1_TO_SRIO -> IDLE");
 		}
 		
 		FSM_STATE_FORCED(ST_RECV_TYPE2_FROM_SRIO, "RECV_TYPE2_FROM_SRIO", type2_recv_from_srio(), )   //20141029 for test
-		//FSM_STATE_FORCED(ST_SEND, "SEND", print_tran_info("[MF]STATE:SEND\n"), )
 		{
 			FSM_TRANSIT_FORCE(ST_IDLE, , "default", "", "RECV_TYPE2_FROM_SRIO -> IDLE");
 		}
@@ -247,8 +240,6 @@ static void srio_sv_init(void)
 	SV(recv_interval)=377;
 	SV(send_interval)=777;
 	SV(recv_pkt_from_enb)=0;
-	/*********20141013 mf modified*************/
-	//SV(type1_cnt) = 0;
 	SV(sfn) = 0;
 	SV(subframeN) = 0;
 	SV(racomplete) = false;
@@ -289,43 +280,6 @@ static void srio_close(void)
 	}
 	FOUT;
 }
-/**************ÃƒÂ»Ã“ÃiciÂµÃ„Ã–Â±Å“Ã“ÃÅ¾Å½Â«**********/
-/*static void packet_send_to_eth(void)
-{
-FSM_PKT* pkptr;
-struct lte_test_srio_head* sh_ptr;
-struct ethhdr* head_ptr;
-char dst_addr[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
-FIN(packet_send_to_eth());
-SV_PTR_GET(srio_sv);
-pkptr = fsm_pkt_get();
-
-if(pkptr != NULL)
-{
-	if(fsm_skb_headroom(pkptr) < (ETH_HLEN + sizeof(struct lte_test_srio_head)))
-		{
-		pkptr = fsm_skb_realloc_headeroom(pkptr,ETH_HLEN + sizeof(struct lte_test_srio_head));
-		if(pkptr == NULL)
-			return;
-		}
-	fsm_skb_push(pkptr, sizeof(struct lte_test_srio_head));
-	sh_ptr = (struct lte_test_srio_head*)pkptr->data;
-	sh_ptr->type = fsm_htonl(0);
-	sh_ptr->len = fsm_htonl(pkptr->len-sizeof(struct lte_test_srio_head));
-	fsm_skb_push(pkptr, ETH_HLEN);
-	head_ptr = (struct ethhdr*)pkptr->data;
-	fsm_mem_cpy(head_ptr->h_dest, dst_addr, ETH_ALEN);
-	fsm_mem_cpy(head_ptr->h_source, fsm_intf_addr_get(STRM_TO_ETH), ETH_ALEN);
-	head_ptr->h_proto = fsm_htons(DEV_PROTO_SRIO);	
-//	//fsm_octets_print(&pkptr->protocol, 2);
-	fsm_pkt_send(pkptr,STRM_TO_ETH);
-	SV(packet_count)++;
-}
-FOUT;
-}
-******/
-/*************ÃˆÂ¥ICI HEAD *****************/
-/*****2014/7/17*************/
 
 /********************************************************************************
 ** Function name: packet_send_to_eth
@@ -340,9 +294,7 @@ FOUT;
 ** Modified Date: 20140717
 ** Modified Description: Ö±½ÓÏú»Ù°ü ²»·¢ËÍ³öÈ¥ ²âÊÔÓÃ
 ********************************************************************************/
-/***** mf modified 20141017 for test**************/
 static void packet_send_to_eth(void)
-//static void packet_send_to_eth(FSM_PKT* pkptr)
 {
 	FSM_PKT* pkptr;
 	FSM_PKT* pkptrcopy;
@@ -356,7 +308,7 @@ static void packet_send_to_eth(void)
 	SV_PTR_GET(srio_sv);
 	fsm_printf("a pkt from upper layer\n");
 	if(SV(racomplete) == true){
-	//fsm_printf("type1_pkt_assemble_test()\n");
+	fsm_printf("type1_pkt_assemble_test()\n");
 		type1_pkt_assemble_test();
 	}else{
 	
@@ -448,7 +400,6 @@ static void packet_send_to_eth(void)
 		}
 	FOUT;}
 	
-	/******ici dispose *********2014/7/17*/
 	
 	/********************************************************************************
 	** Function name: packet_send_to_upperlayer
@@ -633,52 +584,7 @@ static void idle_exit(void)
 		srio_close();
 	}
 	FOUT;
-}
-/***
-static void send_packet_period(void)
-{
-FSM_PKT* pkptr;
-struct lte_test_srio_head* sh_ptr;
-struct ethhdr* head_ptr;
-char* data = "Node0 says hello world!";
-char dst_addr[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
-FIN(send_packet_period());
-SV_PTR_GET(srio_sv);
-if(PACKET_SEND_PERIOD)
-{
-pkptr = fsm_pkt_create(128);
-fsm_skb_put(pkptr, 64);
-fsm_mem_cpy(pkptr->data, data, 24);
-if(fsm_skb_headroom(pkptr) < (ETH_HLEN + sizeof(struct lte_test_srio_head)))
-	{
-	pkptr = fsm_skb_realloc_headeroom(pkptr,ETH_HLEN + sizeof(struct lte_test_srio_head));
-	if(pkptr == NULL)
-		return;
-	}
-fsm_skb_push(pkptr, sizeof(struct lte_test_srio_head));
-sh_ptr = (struct lte_test_srio_head*)pkptr->data;
-sh_ptr->type = fsm_htonl(1);
-sh_ptr->len = fsm_htonl(pkptr->len - sizeof(struct lte_test_srio_head));
-//skb_reset_network_header(pkptr);
-fsm_skb_push(pkptr, ETH_HLEN);
-head_ptr = (struct ethhdr*)pkptr->data;
-fsm_mem_cpy(head_ptr->h_dest, dst_addr, ETH_ALEN);
-fsm_mem_cpy(head_ptr->h_source, fsm_intf_addr_get(STRM_TO_ETH), ETH_ALEN);
-head_ptr->h_proto = fsm_htons(DEV_PROTO_SRIO);
-//fsm_printf("set new timer\n");
-//SV(psend_handle) = fsm_schedule_self(SV(interval), _PACKET_SEND_PERIOD);
-//fsm_printf("timer event is added\n");
-//fsm_pkt_destroy(pkptr);
-fsm_pkt_send(pkptr,STRM_TO_ETH);
-++SV(packet_count);
-fsm_printf("Node0 sends hello world packet.\n");
-}
-FOUT;
-}
-***/
-
-/**add mac ici send****2014/7/10*****/
-
+}
 /********************************************************************************
 ** Function name: send_packet_period
 ** Description: ÖÜÆÚÏòÒÔÌ«Íø·¢°ü(²âÊÔÓÃ)
@@ -755,6 +661,7 @@ static void send_packet_period(void)
 
 static void type1_pkt_assemble_test(void)
 {
+	
 	FIN(type1_pkt_assemble_test());
 	FSM_PKT* pkptr=NULL;
 	FSM_PKT* pkptrfrommac=NULL;
@@ -791,6 +698,8 @@ static void type1_pkt_assemble_test(void)
 	}
 	sysframenum = (u16)GetFrameNo();
 	subframenum = (u16)GetsubFrameNo();
+	
+		
 	//printk("[srio]:sysframenum %d,subframe num %d\n",sysframenum,subframenum);
 	/*******************time delay***************/
 	if(((subframenum>=0) && (subframenum<2))||((subframenum>=7) && (subframenum<10)))
@@ -813,10 +722,16 @@ static void type1_pkt_assemble_test(void)
 		subframenum=7;
 	}
 
-	//count_subframe++;
-	//printk("[srio]:sysframenum %d,subframe num %d\n",sysframenum,subframenum);
-	//subframenum=2;
-	type1public.GHead.NewFlag = 1;//u32
+	if(first_flag != 0)
+		{
+			skipped +=(((sysframenum - last_sysframe+1023)%1023 -1 ) *2 + (subframenum - last_subframe)/5 +1);
+			
+		}
+		//printk("total skipped %d\n",skipped);
+		first_flag = 1 ;
+		last_sysframe = sysframenum ;
+	    last_subframe = subframenum ;
+	type1public.GHead.NewFlag = 1;//u32//default =a for new data
 	type1public.GHead.SFN = sysframenum;//u16
 	type1public.GHead.SubframeN = subframenum;//u16
 	//printk("%u  ",type1public.GHead.SubframeN);
@@ -965,173 +880,6 @@ static void type1_pkt_assemble_test(void)
 	FOUT;
 }
 
-static void type1_pkt_assemble(void){
-	FIN(type1_pkt_assemble());
-	
-	FSM_PKT* pkptr;
-	FSM_PKT* pkptrfrommac;
-	u32 len;
-	u32 tmp_len;
-	u32 i;
-	u16 data_len;
-	MACtoPHYadapter_IciMsg* MactoPhyICI;
-	ENBPHYADPtoPHYType1 type1head;
-	ENB_DL_TYPE1_PBCH_C type1pbchc;
-	ENB_DL_TYPE1_PBCH_D type1pbchd;
-	ENB_DL_TYPE1_PHICH_C type1phichc[2];
-	ENB_DL_TYPE1_PHICH_D type1phichd[2];
-	ENB_DL_TYPE1_PDCCH_C type1pdcchc[5];
-	ENB_DL_TYPE1_PDCCH_D type1pdcchd[5];
-	ENB_DL_TYPE1_PDSCH_C type1pdschc[5];
-	ENB_DL_TYPE1_PDSCH_D type1pdschd[5];
-	
-	fsm_printf("[UE SRIO]Enter type1_pkt_assemble(void)\n");
-	SV_PTR_GET(srio_sv);
-	pkptrfrommac = fsm_pkt_get();
-	SV(recv_upper_pkt_num) ++;
-	//fsm_octets_print(pkptrfrommac->data, 100);
-	MactoPhyICI = (MACtoPHYadapter_IciMsg*)fsm_mem_alloc(sizeof(MACtoPHYadapter_IciMsg));
-	fsm_mem_cpy(MactoPhyICI, (MACtoPHYadapter_IciMsg *)(pkptrfrommac->head), sizeof(MACtoPHYadapter_IciMsg));
-	data_len = pkptrfrommac->tail - pkptrfrommac->data;
-
-	fsm_printf("[UE SRIO]data_len = %d/n", data_len);
-	//create len for test
-	len = sizeof(struct ENBPHYADPtoPHYType1) + sizeof(struct ENB_DL_TYPE1_PBCH_C) + sizeof(struct ENB_DL_TYPE1_PBCH_D) + 
-	2 * sizeof(struct ENB_DL_TYPE1_PHICH_C) + 2 * sizeof(struct ENB_DL_TYPE1_PHICH_D) + 5 * sizeof(struct ENB_DL_TYPE1_PDCCH_C)
-	 + 5 * sizeof(struct ENB_DL_TYPE1_PDCCH_D) + 5 * sizeof(struct ENB_DL_TYPE1_PDSCH_C) + 5 * sizeof(struct ENB_DL_TYPE1_PDSCH_D) + 5 * data_len + 5 * sizeof(u32);
-	pkptr = fsm_pkt_create(len);
-			
-	if(pkptr != NULL)
-	{
-		tmp_len = 0;
-		type1head.GHead.NewFlag = 1;
-		type1head.GHead.SFN = MactoPhyICI->frameNo;
-		type1head.GHead.SubframeN = MactoPhyICI->subframeNo;
-		type1head.DL_TYPE1_PUBLIC_C.PDSCHNum = 5; 
-		type1head.DL_TYPE1_PUBLIC_C.PDCCHNum = 5; 
-		type1head.DL_TYPE1_PUBLIC_C.NumOfUEForPHICH = 2;
-		type1head.DL_TYPE1_PUBLIC_C.Zero = 0;
-		type1head.DL_TYPE1_PUBLIC_C.PBCH_C_Offset = sizeof(ENBPHYADPtoPHYType1);
-		type1head.DL_TYPE1_PUBLIC_C.PBCH_D_Offset = type1head.DL_TYPE1_PUBLIC_C.PBCH_C_Offset + sizeof(ENB_DL_TYPE1_PBCH_C);
-		type1head.DL_TYPE1_PUBLIC_C.PHICH_C_Offset =type1head.DL_TYPE1_PUBLIC_C.PBCH_D_Offset + sizeof(ENB_DL_TYPE1_PBCH_D);
-		type1head.DL_TYPE1_PUBLIC_C.PHICH_D_Offset = type1head.DL_TYPE1_PUBLIC_C.PHICH_C_Offset+ type1head.DL_TYPE1_PUBLIC_C.NumOfUEForPHICH * sizeof(ENB_DL_TYPE1_PHICH_C);
-		type1head.DL_TYPE1_PUBLIC_C.PDCCH_C_Offset = type1head.DL_TYPE1_PUBLIC_C.PHICH_D_Offset + type1head.DL_TYPE1_PUBLIC_C.NumOfUEForPHICH * sizeof(ENB_DL_TYPE1_PHICH_D);
-		type1head.DL_TYPE1_PUBLIC_C.PDCCH_D_Offset =type1head.DL_TYPE1_PUBLIC_C.PDCCH_C_Offset+ type1head.DL_TYPE1_PUBLIC_C.PDCCHNum * sizeof(ENB_DL_TYPE1_PDCCH_C);
-		type1head.DL_TYPE1_PUBLIC_C.PDSCH_C_Offset = type1head.DL_TYPE1_PUBLIC_C.PDCCH_D_Offset+ type1head.DL_TYPE1_PUBLIC_C.PDCCHNum * sizeof(ENB_DL_TYPE1_PDCCH_D);
-		type1head.DL_TYPE1_PUBLIC_C.PDSCH_D_Offset = type1head.DL_TYPE1_PUBLIC_C.PDSCH_C_Offset + type1head.DL_TYPE1_PUBLIC_C.PDSCHNum * sizeof(ENB_DL_TYPE1_PDSCH_C);
-		fsm_skb_put(pkptr,sizeof(struct ENBPHYADPtoPHYType1));
-		fsm_mem_cpy(pkptr->data + tmp_len, &type1head, sizeof(struct ENBPHYADPtoPHYType1));
-		tmp_len += sizeof(struct ENBPHYADPtoPHYType1);
-		type1pbchc.NumPrbBw = 100;
-		type1pbchc.PhichDurtion = 0;
-		type1pbchc.GPhichNg = 0;
-		type1pbchc.spare = 0;	
-		fsm_skb_put(pkptr,sizeof(struct ENB_DL_TYPE1_PBCH_C));
-		fsm_mem_cpy(pkptr->data + tmp_len, &type1pbchc, sizeof(struct ENB_DL_TYPE1_PBCH_C));
-		tmp_len += sizeof(struct ENB_DL_TYPE1_PBCH_C);
-		type1pbchd.SourcePBCH = 0; //´ý¶¨
-		fsm_skb_put(pkptr,sizeof(struct ENB_DL_TYPE1_PBCH_D));
-		fsm_mem_cpy(pkptr->data + tmp_len, &type1pbchd, sizeof(struct ENB_DL_TYPE1_PBCH_D));
-		tmp_len += sizeof(struct ENB_DL_TYPE1_PBCH_D);
-		type1phichc[0].RNTI = MactoPhyICI->rnti;
-		type1phichc[0].zero = 0;
-		type1phichc[0].I_lowest_index_PRB_RA = 0; //´ý¶¨
-		type1phichc[0].NDmrs = 0; //´ý¶¨
-		type1phichc[1].RNTI = 62;
-		type1phichc[1].zero = 0;
-		type1phichc[1].I_lowest_index_PRB_RA = 0; //´ý¶¨
-		type1phichc[1].NDmrs = 0; //´ý¶¨
-		fsm_skb_put(pkptr,2*sizeof(struct ENB_DL_TYPE1_PHICH_C));
-		fsm_mem_cpy(pkptr->data + tmp_len, &type1phichc, 2*sizeof(struct ENB_DL_TYPE1_PHICH_C));
-		tmp_len += 2 * sizeof(struct ENB_DL_TYPE1_PHICH_C);
-		type1phichd[0].RNTI = MactoPhyICI->rnti;
-		type1phichd[0].SourcePHICH = 0;
-		type1phichd[1].RNTI = 62;
-		type1phichd[1].SourcePHICH = 0;
-		fsm_skb_put(pkptr,2*sizeof(struct ENB_DL_TYPE1_PHICH_D));
-		fsm_mem_cpy(pkptr->data + tmp_len, &type1phichd, 2*sizeof(struct ENB_DL_TYPE1_PHICH_D));
-		tmp_len += 2*sizeof(struct ENB_DL_TYPE1_PHICH_D);
-		for(i = 0;i < type1head.DL_TYPE1_PUBLIC_C.PDCCHNum;i ++)
-		{
-			type1pdcchc[i].RNTI = MactoPhyICI->rnti;
-			type1pdcchc[i].CommonPdcchFlag = 0;
-			type1pdcchc[i].PdcchFormat = 0;
-			type1pdcchc[i].DCIFormat = 2;
-			type1pdcchc[i].DciBitLen = 31;
-		}
-		fsm_skb_put(pkptr,5*sizeof(struct ENB_DL_TYPE1_PDCCH_C));
-		fsm_mem_cpy(pkptr->data + tmp_len, &type1pdcchc, 5*sizeof(struct ENB_DL_TYPE1_PDCCH_C));
-		tmp_len += 5*sizeof(struct ENB_DL_TYPE1_PDCCH_C);
-		for(i = 0;i < type1head.DL_TYPE1_PUBLIC_C.PDCCHNum;i ++)
-		{
-			type1pdcchd[i].RNTI = MactoPhyICI->rnti;
-			type1pdcchd[i].zero = 0;
-			if(SV(sfn) == 1 || SV(subframeN) == 6)
-				type1pdcchd[i].DataSource = 0x8ED8F08000000000;
-			else
-				type1pdcchd[i].DataSource = 0x8ED8F08000000000;
-		}
-		fsm_skb_put(pkptr,5*sizeof(struct ENB_DL_TYPE1_PDCCH_D));
-		fsm_mem_cpy(pkptr->data + tmp_len, &type1pdcchd, 5*sizeof(struct ENB_DL_TYPE1_PDCCH_D));
-		tmp_len += 5*sizeof(struct ENB_DL_TYPE1_PDCCH_D);
-		for(i = 0;i < type1head.DL_TYPE1_PUBLIC_C.PDSCHNum;i ++)
-		{
-			type1pdschc[i].RNTI = MactoPhyICI->rnti;
-			type1pdschc[i].NumCW = 1;
-			type1pdschc[i].NumPrbofUe = 20;
-			type1pdschc[i].UeCategory = 3;
-			type1pdschc[i].UeTransMod = 2;
-			type1pdschc[i].NumHarqPro = 8;
-			type1pdschc[i].RvIdx = 0;
-			type1pdschc[i].Modulation = 1;
-			type1pdschc[i].NumLayers = 2;
-			type1pdschc[i].DelayMod = 0;
-			type1pdschc[i].PA = 4;
-			type1pdschc[i].zero = 0;
-			if(SV(sfn) == 1 || SV(subframeN) == 6)
-			{
-				type1pdschc[i].PDSCHTbSize = 4264; //ÌØÊâframe
-			}
-			else
-			{
-				type1pdschc[i].PDSCHTbSize = 5736;
-			}
-			type1pdschc[i].BitMap = 0xF8000000>>(5 * i);
-		}
-		fsm_skb_put(pkptr,5*sizeof(struct ENB_DL_TYPE1_PDSCH_C));
-		fsm_mem_cpy(pkptr->data + tmp_len, &type1pdschc, 5*sizeof(struct ENB_DL_TYPE1_PDSCH_C));
-		tmp_len += 5*sizeof(struct ENB_DL_TYPE1_PDSCH_C);	
-		fsm_skb_put(pkptr,5*sizeof(struct ENB_DL_TYPE1_PDSCH_D)+5*data_len+5*sizeof(u32));
-		for(i = 0;i < type1head.DL_TYPE1_PUBLIC_C.PDSCHNum;i ++)
-		{
-			type1pdschd[i].RNTI = MactoPhyICI->rnti;
-			type1pdschd[i].PdschData = data_len;
-			fsm_mem_cpy(pkptr->data + tmp_len, &type1pdschd, sizeof(struct ENB_DL_TYPE1_PDSCH_D));
-			tmp_len += sizeof(struct ENB_DL_TYPE1_PDSCH_D);
-			fsm_mem_cpy(pkptr->data + tmp_len, &SV(recv_upper_pkt_num), sizeof(u32));
-			tmp_len += sizeof(u32);
-			fsm_mem_cpy(pkptr->data + tmp_len, pkptrfrommac->data, data_len);
-			tmp_len += data_len;
-		}
-		fsm_pkt_destroy(pkptrfrommac);
-		fsm_printf("[UE SRIO]:pkptr->data len = %d:\n", pkptr->len);
-		//fsm_octets_print(pkptr->data, pkptr->len);
-		//fsm_pkt_send(pkptrcopy,STRM_TO_ETH);//for test
-		if (SV(stored_pkt_count) >= MAX_STORED_PKT){
-			fsm_printf("[UE SRIO] stored_pkt_count %d FOUT.\n", SV(stored_pkt_count));
-			printk("[UE SRIO]pkt No.%d in FOUT due to storage room not big enough\n", SV(recv_upper_pkt_num));
-			FOUT;
-		}
-		//printk("%d\n", SV(recv_upper_pkt_num));
-		SV(pkts[SV(stored_pkt_count)]) = pkptr;
-		//type1_send_to_srio();
-		fsm_printf("[UE SRIO] packet %d has been stored.\n", SV(stored_pkt_count));
-		SV(stored_pkt_count)++;
-		type1_send_to_srio();
-	}
-	FOUT;
-}
-
 
 static void type1_send_to_srio(){
 	FIN(type1_send_to_srio())
@@ -1205,6 +953,14 @@ static void idle_ioctl_handler(void)
 	{
 		switch(fsm_ev_ioctrl_cmd())
 		{
+			case IOCCMD_HELLO_WORLD:
+				printk("skipped %d \n",skipped);
+				 skipped = 0 ;
+                 last_sysframe = 0 ;
+				 last_subframe = 0 ;
+				 first_flag = 0 ;
+				
+				FOUT;
 			case IOCCMD_PSEND_RUN:
 				if(SV(psend_handle) == 0)
 				{
@@ -1255,6 +1011,7 @@ static void idle_ioctl_handler(void)
 			case IOCCMD_MACtoPHY_Preamble_Indicate:
 				fsm_printf("SRIO:IOCCMD_MACtoPHY_Preamble_Indicate.\n");
 				test_send_msg1();
+				printk("test_send_msg1()\n");
 				FOUT;
 			/*************20141013 MF modified**************To receive type1 ioctl from RRC*************/
 			case IOCCMD_RRCtoPHY_Type1_Indicate:
@@ -1431,7 +1188,6 @@ static void test_send_msg1(void)
 		//SV(packet_count)++;
 }
 
-/**************end******************************************/
 /********************************************************************************
 ** Function name: cfg_ioctl_handler
 ** Description: ´¦ÀíCFG×´Ì¬ÏÂµÄIOControl
@@ -1454,21 +1210,12 @@ static void cfg_ioctl_handler(void)
 	{
 		switch(fsm_ev_ioctrl_cmd())
 		{
-			/*************20141013 MF modified**************To receive type1 ioctl from RRC*************/
 			default:
 				fsm_printf("SRIO:Unrecognized I/O control command.\n");
 			FOUT;
 		}
 	}
 }
-
-
-
-
-
-
-
-
 
 
 /********************************************************************************

@@ -649,8 +649,6 @@ static void type1_send_to_srio(){
 
 
 
-/******ici dispose *********2014/7/17*/
-
 /********************************************************************************
 ** Function name: packet_send_to_upperlayer
 ** Description: šº?ŠÌ???2?¡€¡éŠÌ?šºy?Y¡ãš¹¡ê??š°šŠ?¡€¡é?šªŠÌ?MAC2?(2ašº?š®?)
@@ -774,7 +772,6 @@ static void idle_exit(void)
 	if(SRIO_CLOSE)
 	{
 		srio_close();
-		//tasklet_kill(&recv_tasklet);
 	}
 	FOUT;
 }
@@ -795,10 +792,6 @@ static void send_packet_period(void)
 {
 
 	FSM_PKT* pkptr;
-	//struct lte_test_srio_head* sh_ptr;
-	//struct MACtoPHYadapter_IciMsg * ici_to_phyadapter;
-	//struct PHYadaptertoMAC_IciMsg * ici_to_macpacket_send_to_upperlayer()
-;
 	struct ethhdr* head_ptr;
 	
 	char* data = "hello world!";
@@ -806,7 +799,6 @@ static void send_packet_period(void)
 	
 	FIN(send_packet_period());
 	SV_PTR_GET(srio_sv);
-	//fsm_printf("[ENB SRIO] ENTER send_packet_period()\n");
 	if(PACKET_SEND_PERIOD)
 	{
 		pkptr = fsm_pkt_create(128);
@@ -827,32 +819,13 @@ static void send_packet_period(void)
 				return;
 		}
 		fsm_mem_cpy(pkptr->data, data, 12);
-		/*
-		fsm_skb_push(pkptr, sizeof(struct MACtoPHYadapter_IciMsg));
-		ici_to_phyadapter=(struct MACtoPHYadapter_IciMsg *)pkptr->data;
-		ici_to_phyadapter->frameNo=1;
-		ici_to_phyadapter->MessageType=1;
-		ici_to_phyadapter->rnti=1;
-		ici_to_phyadapter->subframeNo=1;
-		ici_to_phyadapter->tcid=1;
-		fsm_skb_push(pkptr, sizeof(struct lte_test_srio_head));
-		sh_ptr = (struct lte_test_srio_head*)pkptr->data;
-		sh_ptr->type = fsm_htonl(0);
-		sh_ptr->len = fsm_htonl(pkptr->len - sizeof(struct lte_test_srio_head));
-		*/
-		//skb_reset_network_header(pkptr);
 		fsm_skb_push(pkptr, ETH_HLEN);
 		head_ptr = (struct ethhdr*)pkptr->data;
 		fsm_mem_cpy(head_ptr->h_dest, dst_addr, ETH_ALEN);
 		fsm_mem_cpy(head_ptr->h_source, fsm_intf_addr_get(STRM_TO_ETH), ETH_ALEN);
 		head_ptr->h_proto = fsm_htons(DEV_PROTO_SRIO);
-		//fsm_printf("set new timer\n");
-		//fsm_printf("timer event is added\n");
 		SV(psend_handle) = fsm_schedule_self(SV(interval), _PACKET_SEND_PERIOD);
-		//fsm_pkt_send(pkptr,STRM_TO_ETH);
-		//fsm_pkt_destroy(pkptr);
 		++SV(packet_count);
-		//fsm_printf("[ENB SRIO]Node0 sends hello world packet periodly.\n");
 	}
 	FOUT;
 }
@@ -925,27 +898,15 @@ static void idle_ioctl_handler(void)
 				fsm_data_destroy(rec_data_ptr);
 				fsm_do_ioctrl(STRM_TO_MAC, IOCCMD_SAY_HELLO, (void*)data_ptr, 22);	
 			FOUT;
-			//20140715 mf
-			/*
-			case IOCCMD_TEST_SEND_MSG3:
-				fsm_printf("SRIO:IOCCMD_TEST_SEND_MSG3.\n");
-				if(SV(psend_handle) == 0)
-				{
-					SV(psend_handle) = fsm_schedule_self(SV(interval), _MSG3_FROM_UPPER);
-				}
-				FOUT;
-				*/
 			case IOCCMD_MACtoPHY_RNTI_Indicate:
 				fsm_printf("SRIO:IOCCMD_MACtoPHY_RNTI_Indicate.\n");
 				
 				FOUT;
 			case IOCCMD_MACtoPHY_recv_sysinfo: // 20140715 mf ???????a?3??
 				fsm_printf("SRIO:IOCCMD_MACtoPHY_recv_sysinfo.\n");
-				//send_sysinfo();
 				FOUT;
 			case IOCCMD_MACtoPHY_recv_paging:
 				fsm_printf("SRIO:IOCCMD_MACtoPHY_recv_paging.\n");
-				//send_paging();
 				FOUT;
 			case IOCCMD_MACtoPHY_Preamble_Indicate:
 
@@ -996,8 +957,6 @@ static void idle_ioctl_handler(void)
 				Dci_Store = SV(Dci_Store);
 				Dl_Schedule = (ENBMAC_TO_PHY_DLschedule*)fsm_data_get();
 				rnti = Dl_Schedule->m_rnti;
-				//fsm_printf("[srio]dl dci  rnti=%d\n",rnti);
-				//FOUT;
 				for (i = 0; i < USER_NUM; i ++)
 				{
 					if (Dci_Store.rnti[i] == 0)
@@ -1113,8 +1072,6 @@ static void send_uldci_to_ue(void)
 
 	Dci_Store = SV(Dci_Store);
 	Ul_Schedule = (ENBMAC_TO_PHY_ULschedule*)fsm_data_get();
-	//fsm_data_destroy(Ul_Schedule);
-	//FOUT;
 	rnti = Ul_Schedule->m_rnti;
 	for (i = 0; i < USER_NUM; i ++)
 	{
@@ -1212,8 +1169,6 @@ static void test_send_msg1(void)
 	}
 
 	fsm_do_ioctrl(STRM_TO_MAC,IOCCMD_PHYtoMAC_RA_Req,(void *)Msg1,sizeof(u32)+num*sizeof(S_RAinfo));
-	//fsm_printf("[srio][test_send_msg1][-->]Message1 has sent to MAC.\n");
-	
 	
 }
 static void test_send_msg3(void)
@@ -1230,17 +1185,12 @@ static void test_send_ta(void)
 	Ta_info->rnti = 61;
 	Ta_info->update_flag = 1;
 	Ta_info->ta = 42;
-
-	//fsm_do_ioctrl(STRM_TO_MAC,IOCCMD_PHYtoMAC_TA,(void *)Ta_info,sizeof(Ue_ta_info));
-	//fsm_printf("[srio][test_send_ta][-->]TA has sent to MAC.\n");
 	fsm_schedule_self(10000, _TEST_SEND_TA);
 }
 
 static void test_send_uldata(void)
 {
 	FSM_PKT* pkptr;
-	//pkptr = fsm_pkt_create(248);
-	//createHead(pkptr, 2, 0, 2);
 	pkptr=generatepkt(61);
 	fsm_pkt_send(pkptr,STRM_TO_MAC);
 }
@@ -1252,10 +1202,6 @@ static void test_send_sf(void)
 
 	Sf_info->sfn = SV(sfn);
 	Sf_info->subframeN = SV(subframeN);
-
-	//fsm_do_ioctrl(STRM_TO_MAC,IOCCMD_PHYtoMAC_FRAME,(void *)Sf_info,sizeof(Sf_info));
-	//fsm_printf("[srio][test_send_sf][-->]SF has sent to MAC.sf = %d, subframeN = %d\n", SV(sfn), SV(subframeN));
-
 	SV(sfn) ++;
 	SV(subframeN) ++;
 
@@ -1263,9 +1209,6 @@ static void test_send_sf(void)
 		SV(sfn) = 0;
 	if (SV(subframeN) > 9)
 		SV(subframeN) = 0;
-	
-	//fsm_schedule_self(10000, _TEST_SEND_SF);
-	//fsm_schedule_self(500000, _TYPE1_SEND_TO_SRIO);
 }
 
 static void read_mem()
@@ -1488,28 +1431,6 @@ u32 createHead(FSM_PKT *skb,u32 control_numb,u32 data_numb,char typ){
 	//fsm_mem_cpy(skb->data+from_len,last_subhead,len);
 	fsm_mem_cpy(fsm_skb_put(skb,len),last_subhead,len);
 	from_len=from_len+len;
-	//fsm_printf("%c\n",last_subhead->m_lcid_e_r_r);
-
-/*	return from_len;*/
-/*	for(i=0;i<data_numb-1;i++){	//SDU ¡Áš®šª¡€
-		fsm_mem_set(subhead_7bit,0,sizeof(MAC_SDU_subhead_7bit));
-		subhead_7bit->m_lcid_e_r_r=37;
-		len=14;
-		subhead_7bit->m_f_l=len;
-		//data_len=data_len+len;
-		len=sizeof(MAC_SDU_subhead_7bit);
-		fsm_mem_cpy(skb->data+from_len,subhead_7bit,len);
-		from_len=from_len+len;
-	}
-	fsm_mem_set(subhead_7bit,0,len);
-	subhead_7bit->m_lcid_e_r_r=5;
-	len=14;
-	subhead_7bit->m_f_l=len;
-	//data_len=data_len+len;
-	len=sizeof(MAC_SDU_subhead_7bit);
-	fsm_mem_cpy(skb->data+from_len,subhead_7bit,len);
-	from_len=from_len+len;*/
-
 	for(i=0;i<control_numb-1;i++){
 		if(i%2==0){
 			len=createLongBsr(skb,from_len);
@@ -1522,11 +1443,6 @@ u32 createHead(FSM_PKT *skb,u32 control_numb,u32 data_numb,char typ){
 	}
 	len=createLongBsr(skb,from_len);
 	from_len=len;
-	/*for(i=0;i<data_numb;i++){
-		fsm_mem_cpy(skb->data+from_len,data1,14);
-		from_len+=14;
-	}*/
-	
 	FRET(from_len);
 	//FOUT;
 }
@@ -1551,17 +1467,12 @@ static void msgFromCCCH(FSM_PKT* skb){
 	u32 cntt1=512;
 	u32 len=sizeof(u32);
 	u32 cntt2=1;
-
 	rrc_req.type=1;
-	//rrc_req.ue_Identity=cntt1;
 	rrc_req.establishmentCause=highPriorityAccess;
 	fsm_mem_set(&(rrc_req.ue_Identity),0,sizeof(rrc_req.ue_Identity));
 	//fsm_mem_cpy(&(rrc_req.ue_Identity.s_TMSI),&cntt1,len);
 	rrc_req.ue_Identity.s_TMSI.m_TMSI=cntt1;
 	rrc_req.ue_Identity.s_TMSI.mmec=cntt2;
-	//fsm_printf("[HEXI]UE ID AND ESTABLUSHMENT CAUSE IN CONCTRUCTOIN:%d,%d,%d\n",rrc_req.ue_Identity.s_TMSI.mmec,rrc_req.ue_Identity.s_TMSI.m_TMSI,rrc_req.establishmentCause);
-	/*len=sizeof(short);
-	fsm_mem_cpy(&(rrc_req.establishmentCause),&cntt2,len);*/
 	len=sizeof(RRCConnectionRequest);
 	ici_to_mac->rnti= 61; 
 	ici_to_mac->tcid= 2;
@@ -1586,16 +1497,6 @@ static void skbFromRlc(FSM_PKT* pkptr)
 	RLCtoMAC_IciMsg *ici_to_mac=(RLCtoMAC_IciMsg*)fsm_mem_alloc(sizeof(RLCtoMAC_IciMsg));
 	char *sdu_data="hello world";
 	MAC_SDU_subhead_7bit *mac_7bit_subhead=(MAC_SDU_subhead_7bit *)fsm_mem_alloc(sizeof(MAC_SDU_subhead_7bit));
-	//FIN(test_send_msg4());
-	//fsm_printf("[SRIO] enter test_send_msg4");
-	//pkptr = fsm_pkt_get();
-	//fsm_pkt_destroy(pkptr);
-
-
-	//pkptr = fsm_pkt_create(128);
-	//fsm_skb_reserve(pkptr ,sizeof(RLCtoMAC_IciMsg));//?š¢?šª¡€2?ŠÌ????? ¡€?ICI
-	//ici_to_mac->tcid= 2;
-	//ici_to_mac->MessageType =1; 
 	ici_to_mac->rnti= 61; 
 	ici_to_mac->len=sizeof(MAC_SDU_subhead_7bit);
 	ici_to_mac->pbCh=2;
@@ -1608,13 +1509,10 @@ static void skbFromRlc(FSM_PKT* pkptr)
 	fsm_mem_cpy(fsm_skb_put(pkptr,12),sdu_data,12);
 	fsm_mem_free(ici_to_mac);//šºšª¡€??š²??
 	fsm_pkt_send(pkptr,STRM_TO_MAC);
-	//š¬šª?š®RRC šºy?YŠÌ?SK_BUF?D  
-	
 FOUT;
 }
 
 static void recv_tasklet_handler(char *buffer){
-/**********************************************************/
 	void* checkaddr;		
 	FSM_PKT* pkptrtomac;
 	PHYadaptertoMAC_IciMsg * ici_to_mac;
@@ -1646,6 +1544,7 @@ static void recv_tasklet_handler(char *buffer){
 	fsm_mem_cpy(pkptrtomac->data,buffer+sizeof(ENBULPHYADPtoPHYType2) + sizeof(ENB_UL_TYPE2_PUCCH_C) + sizeof(ENB_UL_TYPE2_PUSCH_C) + sizeof(ENB_UL_TYPE2_PUSCH_D)+2,data_len);
 fsm_octets_print(pkptrtomac->head,data_len+sizeof(PHYadaptertoMAC_IciMsg));
 	fsm_pkt_send(pkptrtomac, STRM_TO_MAC);
+	printk("sendig to mac...\n");
 	SV(recv_count)++;
 	fsm_mem_free(ici_to_mac);
 	fsm_mem_free(checkaddr);

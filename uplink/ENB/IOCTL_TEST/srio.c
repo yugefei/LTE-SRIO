@@ -32,18 +32,6 @@ int main(int argc, char *argv[])
 				ioctl(sock, USERIOCCMD, &ifr);
 			}	
 		}
-		//ygf hello world test
-		else if(strcmp(argv[1], "-hello_world")==0)
-		{
-            if(args == 3)
-            {
-            	strcpy(ifr.ifr_ifrn.ifrn_name, argv[2]);
-            	print_hello(&kifr);
-            	ifr.ifr_ifru.ifru_data = (void*)&kifr;
-            	ioctl(sock, USERIOCCMD, &ifr);
-            }
-            	
-		}
 		else if(strcmp(argv[1], "-r") == 0)
 		{	
 			if(argc == 3)
@@ -168,13 +156,7 @@ int main(int argc, char *argv[])
 		usage();
 	return 1;
 }
-//ygf hello world test
-void print_hello(struct kifreq* ifr_ptr)
-{
-	ifr_ptr->cmd = HELLO_WORLD;
-	ifr_ptr->size = 0;
-	ifr_ptr->data_ptr = NULL;
-}
+
 
 void add_interval(struct kifreq* ifr_ptr)
 {

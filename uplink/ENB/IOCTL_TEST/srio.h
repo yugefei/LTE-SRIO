@@ -13,7 +13,6 @@
 #define MINUS_INTERVAL	0x67
 #define PRINT_COUNT_STATISTICS 0x68
 #define STOP_TIMER 0X888
-#define HELLO_WORLD 0x900//ygf
 
 typedef uint32_t 	u32;
 
@@ -37,4 +36,3 @@ void minus_interval(struct kifreq* ifr_ptr);
 void print_pkt_ue(struct kifreq* ifr_ptr);
 void usage(void);	
 void stop_timer(struct kifreq* ifr_ptr);	
-void print_hello(struct kifreq* ifr_ptr);//ygf
