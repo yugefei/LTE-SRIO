@@ -7,5 +7,5 @@ for uplink
 for downlink
 
 ###test diary
-20160523£ºtest with dsp+fpga base 5ms success in sending imag files
+20160523:test with dsp+fpga base 5ms success in sending imag files
 
